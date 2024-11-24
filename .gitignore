@@ -1,0 +1,5 @@
+
+# Ignore build directories
+build/
+
+Y-2024.csv
