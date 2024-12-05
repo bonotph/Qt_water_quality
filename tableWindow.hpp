@@ -11,7 +11,7 @@ class TableWidget: public QWidget
   Q_OBJECT
 
   public:
-    TableWidget();
+    TableWidget(SampleModel* sharedModel);
 
   private:
     void createWidgets();

@@ -1,8 +1,10 @@
 #include <QtWidgets>
 #include "tableWindow.hpp"
 
-TableWidget::TableWidget()
+TableWidget::TableWidget(SampleModel* sharedModel)
 {
+  model = sharedModel;
+
   createWidgets();
   createLayouts();
 }
@@ -11,10 +13,8 @@ void TableWidget::createWidgets()
 {
   mainLayout = new QVBoxLayout();
 
-  SampleModel* model = new SampleModel();
   tableOverView = new QTableView();
   tableOverView->setModel(model);
-  model->updateFromFile("../Y-2024.csv");
 
   tableOverView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 

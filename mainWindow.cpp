@@ -7,6 +7,9 @@
 
 MainDashboard::MainDashboard():QMainWindow()
 {
+  sharedModel = new SampleModel();
+  sharedModel->updateFromFile("../Y-2024.csv");
+  
   createWidgets();
   createTabBar();
   createPages();
@@ -24,8 +27,8 @@ void MainDashboard::createWidgets()
   langChoice = new QComboBox();
   mainWidget = new QStackedWidget();
 
-  tableWidget = new TableWidget();
-  flourinatedCompounds = new FlourinatedCompounds();
+  tableWidget = new TableWidget(sharedModel);
+  flourinatedCompounds = new FlourinatedCompounds(sharedModel);
 
   setCentralWidget(mainWidget);
 }

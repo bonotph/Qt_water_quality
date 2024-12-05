@@ -9,6 +9,7 @@ class QStackedWidget;
 
 class QHBoxLayout;
 
+class SampleModel;
 class TableWidget;
 class FlourinatedCompounds;
 
@@ -30,6 +31,8 @@ class MainDashboard: public QMainWindow
     QLabel* langLabel;
     QComboBox* langChoice;
     QStackedWidget* mainWidget;
+
+    SampleModel* sharedModel;
 
     TableWidget* tableWidget;
     FlourinatedCompounds* flourinatedCompounds;
