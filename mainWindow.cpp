@@ -4,6 +4,7 @@
 
 #include "tableWindow.hpp"
 #include "flourinatedCompounds.hpp"
+#include "compliance.hpp"
 
 MainDashboard::MainDashboard():QMainWindow()
 {
@@ -26,9 +27,9 @@ void MainDashboard::createWidgets()
   //langLabel = new QLabel("Language:");
   langChoice = new QComboBox();
   mainWidget = new QStackedWidget();
-
   tableWidget = new TableWidget(sharedModel);
   flourinatedCompounds = new FlourinatedCompounds(sharedModel);
+  complianceDashboard = new ComplianceDashboard(sharedModel);
 
   setCentralWidget(mainWidget);
 }
@@ -63,7 +64,7 @@ void MainDashboard::createPages()
   mainWidget->addWidget(new QWidget());
   mainWidget->addWidget(new QWidget());
   mainWidget->addWidget(flourinatedCompounds);
-  mainWidget->addWidget(new QWidget());
+  mainWidget->addWidget(complianceDashboard);
 
   mainWidget->addWidget(tableWidget);
 

@@ -21,6 +21,8 @@ void SampleDataset::loadData(const string& filename)
       row["determinand.label"].get<>(), //parameter
       row["result"].get<double>(),
       row["determinand.unit.label"].get<>(), //unit
+      row["sample.sampledMaterialType.label"].get<>(), //material
+      row["sample.isComplianceSample"].get<>() //compliance status
     };
     data.push_back(Sample);
   }

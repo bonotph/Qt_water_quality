@@ -6,8 +6,8 @@
 using namespace std;
 
 
-Sample::Sample(const string& tm, const string& si, const string& para, double res, const string& un):
-  time(tm), site(si), parameter(para), result(res), unit(un)
+Sample::Sample(const string& tm, const string& si, const string& para, double res, const string& un, const string& ma, const string& co):
+    time(tm), site(si), parameter(para), result(res), unit(un), material(ma), compliance(co)
 {
   ostringstream error;
 }
@@ -19,5 +19,7 @@ ostream& operator<<(ostream& out, const Sample& sample)
              << "\nSite: " << sample.getSite() 
              << "\nParameter: " << sample.getParameter() 
              << "\nResult: " << sample.getResult() 
-             << "\nUnit: " << sample.getUnit() << endl;
+             << "\nUnit: " << sample.getUnit()
+             << "\nMaterial: " << sample.getMaterial()
+             << "\nCompliance: " << sample.getCompliance() << endl;;
 }

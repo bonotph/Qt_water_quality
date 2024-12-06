@@ -12,6 +12,7 @@ class QHBoxLayout;
 class SampleModel;
 class TableWidget;
 class FlourinatedCompounds;
+class ComplianceDashboard;
 
 class MainDashboard: public QMainWindow
 {
@@ -36,6 +37,7 @@ class MainDashboard: public QMainWindow
 
     TableWidget* tableWidget;
     FlourinatedCompounds* flourinatedCompounds;
+    ComplianceDashboard* complianceDashboard;
 
     QHBoxLayout* headerLayout;
 };

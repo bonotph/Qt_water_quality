@@ -28,6 +28,8 @@ QVariant SampleModel::data(const QModelIndex& index, int role) const
       case 2: return QVariant(q.getParameter().c_str());
       case 3: return QVariant(q.getResult());
       case 4: return QVariant(q.getUnit().c_str());
+      case 5: return QVariant(q.getMaterial().c_str());
+      case 6: return QVariant(q.getCompliance().c_str());
     }
   }
 
@@ -51,6 +53,8 @@ QVariant SampleModel::headerData(int section, Qt::Orientation orientation, int r
     case 2: return QString("Parameter");
     case 3: return QString("Result");
     case 4: return QString("Unit");
+    case 5: return QString("Material");
+    case 6: return QString("Compliance");
     default: return QVariant();
   }
 }
