@@ -1,4 +1,3 @@
-
 #include <QLabel>
 #include <QtCharts>
 
@@ -8,33 +7,73 @@ class ComplianceDashboardItem : public QWidget {
 public:
     ComplianceDashboardItem(
         const QVector<QString>& locations,
-        const QString& pollutantName,
-        double safeThreshold,
-        const QVector<double>& measurements,
-        const QVector<bool>& isCompliance,
+        const QString& pollutants,
+        double thresholds,
+        const QVector<double>& values,
+        const QVector<bool>& compliances,
         QWidget *parent = nullptr
         );
 
-    void updateData(const QVector<QString>& locations,double safeThreshold, const QVector<double>& measurements,const QVector<bool>& complianceStatus);
-    bool ComplianceStatus;
+    void updateData(const QVector<QString>& locations,double thresholds, const QVector<double>& values,const QVector<bool>& complianceStatus);
+    bool complianceStatus;
 
 private:
-    void createMainWidget();
-    QChartView* createScrollableLineChart();
+    void createWidgets();
+    QChartView* createLineChart();
     QChartView* createGroupedBarChart();
     QTableWidget* createSummaryTable();
-    void createComplianceVisualization();
+    void createGraphs();
     QString determineComplianceStatus(const QVector<double>& measurements, double safeThreshold, const QVector<bool>& isComply);
     QColor getComplianceColor(const QString& status);
 
-    QVector<QString> m_location;
-    QString m_pollutantName;
-    double m_safeThreshold;
-    QVector<double> m_measurements;
-    QVector<bool> m_isComply;
+    QVector<QString> itemLocation;
+    QString itemPollutant;
+    double itemThreshold;
+    QVector<double> itemValue;
+    QVector<bool> itemIsComply;
 
-    QVBoxLayout* m_layout;
-    QLabel* m_nameLabel;
+    QVBoxLayout* itemLayout;
+    QLabel* itemNameLabel;
     QLabel* m_statusLabel;
     QChartView* m_chartView;
+};
+
+class CustomChartView : public QChartView {
+public:
+    explicit CustomChartView(QChart *chart, QWidget *parent = nullptr) 
+        : QChartView(chart, parent) {}
+
+protected:
+    bool event(QEvent *event) override {
+        if (event->type() == QEvent::ToolTip) {
+            QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
+            QPoint pos = helpEvent->pos();
+            
+            // Convert position to chart coordinates
+            QPointF scenePos = mapToScene(pos);
+            QPointF chartPos = chart()->mapFromScene(scenePos);
+            
+            // Get X axis
+            QBarCategoryAxis *axisX = qobject_cast<QBarCategoryAxis*>(chart()->axes(Qt::Horizontal).first());
+            if (axisX) {
+                // Get the plot area rect
+                QRectF plotArea = chart()->plotArea();
+                // Create a rectangle for the axis area (below the plot)
+                QRectF axisRect(plotArea.left(), plotArea.bottom(), plotArea.width(), 50);
+
+                if (axisRect.contains(chartPos)) {
+                    // Find which label is being hovered
+                    int index = axisX->categories().size() * (chartPos.x() - plotArea.left()) / plotArea.width();
+                    if (index >= 0 && index < axisX->categories().size()) {
+                        QString fullText = axisX->categories().at(index);
+                        QToolTip::showText(helpEvent->globalPos(), fullText);
+                        return true;
+                    }
+                }
+            }
+            
+            QToolTip::hideText();
+        }
+        return QChartView::event(event);
+    }
 };

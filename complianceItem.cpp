@@ -1,93 +1,114 @@
 #include "complianceItem.hpp"
-#include <QVBoxLayout>
 #include <QtCharts>
-
-//constructor
 ComplianceDashboardItem::ComplianceDashboardItem(
     const QVector<QString>& locations,
-    const QString& pollutantName,
-    double safeThreshold,
-    const QVector<double>& measurements,
-    const QVector<bool>& isCompliance,
+    const QString& pollutants,
+    double thresholds,
+    const QVector<double>& values,
+    const QVector<bool>& compliances,
     QWidget *parent
     ) : QWidget(parent),
-    m_location(locations),
-    m_pollutantName(pollutantName),
-    m_safeThreshold(safeThreshold),
-    m_measurements(measurements),
-    m_isComply(isCompliance){
-    createMainWidget();
+    itemLocation(locations),
+    itemPollutant(pollutants),
+    itemThreshold(thresholds),
+    itemValue(values),
+    itemIsComply(compliances){
+    createWidgets();
 }
 
 
-void ComplianceDashboardItem::createMainWidget() {
-    m_layout = new QVBoxLayout(this);
+void ComplianceDashboardItem::createWidgets() {
+    itemLayout = new QVBoxLayout(this);
 
-    // Pollutant Name
-    m_nameLabel = new QLabel(m_pollutantName, this);
-    m_nameLabel->setStyleSheet("font-weight: bold; font-size: 16px;");
-    m_layout->addWidget(m_nameLabel);
+    // pollutant name
+    itemNameLabel = new QLabel(itemPollutant, this);
+    itemNameLabel->setStyleSheet("font-weight: bold; font-size: 16px;");
+    itemLayout->addWidget(itemNameLabel);
 
-    // Compliance Status
+    //compliance status
     m_statusLabel = new QLabel(this);
-    QString status = determineComplianceStatus(m_measurements, m_safeThreshold, m_isComply);
-    ComplianceStatus = status=="Compliant" || status=="Caution";
+    QString status = determineComplianceStatus(itemValue, itemThreshold, itemIsComply);
+    complianceStatus = status=="Compliant" || status=="Caution";
     m_statusLabel->setText(QString("Compliance Status: %1").arg(status));
     m_statusLabel->setStyleSheet(QString(
                                      "font-weight: bold; padding: 5px; border-radius: 5px; "
                                      "background-color: %1; color: white;"
                                      ).arg(getComplianceColor(status).name()));
-    m_layout->addWidget(m_statusLabel);
+    itemLayout->addWidget(m_statusLabel);
 
-    // Create Compliance Chart
-    createScrollableLineChart();
+    // compliance Charts
+    createLineChart();
     createGroupedBarChart();
     createSummaryTable();
-    createComplianceVisualization();
+    createGraphs();
 
-    setLayout(m_layout);
+    setLayout(itemLayout);
 }
 
-void ComplianceDashboardItem::createComplianceVisualization() {
-    // Create a tab widget to host different views
-    QTabWidget *tabWidget = new QTabWidget(this);
+void ComplianceDashboardItem::updateData(
+    const QVector<QString>& locations,
+    double thresholds,
+    const QVector<double>& values,
+    const QVector<bool>& compliances
+    ) {
+    itemLocation = locations;
+    itemThreshold = thresholds;
+    itemValue = values;
 
-    // 1. Line Chart View (Scrollable)
-    QChartView *lineChartView = createScrollableLineChart();
-    tabWidget->addTab(lineChartView, "Trend Chart");
-
-    // 2. Bar Chart View 
-    QChartView *barChartView = createGroupedBarChart();
-    tabWidget->addTab(barChartView, "Comparison Chart");
-
-    // 3. Summary Table View
-    QTableWidget *summaryTable = createSummaryTable();
-    tabWidget->addTab(summaryTable, "Data Summary");
-
-    m_layout->addWidget(tabWidget);
+    // recreate with new data
+    QLayoutItem *child;
+    while ((child = itemLayout->takeAt(0)) != nullptr) {
+        delete child->widget();
+        delete child;
+    }
+    createWidgets();
 }
 
-QChartView* ComplianceDashboardItem::createScrollableLineChart() {
+QString ComplianceDashboardItem::determineComplianceStatus(
+    const QVector<double>& measurements,
+    double safeThreshold,
+    const QVector<bool>& isComply
+    ) {
+    int exceedanceCount = std::count_if(measurements.begin(), measurements.end(),
+                                        [safeThreshold](double val) { return val > safeThreshold; }); //compare with threshold
+    int statusCount = std::count_if(isComply.begin(), isComply.end(),
+                                    [safeThreshold](double val) { return val == true; }); // compare with compliance data
+    double exceedancePercentage = (double)exceedanceCount / measurements.size() * 100;
+    double statusPercentage = statusCount/isComply.size() * 100;
+    if (exceedancePercentage <= 10 && statusPercentage >= 50) return "Compliant";
+    if (exceedancePercentage <= 25 && statusPercentage >= 50) return "Caution";
+    return "Non-Compliant";
+}
+
+
+QColor ComplianceDashboardItem::getComplianceColor(const QString& status) {
+    if (status == "Compliant") return QColor(0, 180, 0);     // green
+    if (status == "Caution") return QColor(255, 165, 0);     // yellow
+    return QColor(255, 0, 0);                               // red
+}
+
+
+QChartView* ComplianceDashboardItem::createLineChart() {
     QChart *chart = new QChart();
-    chart->setTitle(QString("%1 Levels Across Locations").arg(m_pollutantName));
+    chart->setTitle(QString("%1 Levels Across Locations").arg(itemPollutant));
 
     QLineSeries *series = new QLineSeries();
-    series->setName(m_pollutantName);
+    series->setName(itemPollutant);
 
-    for (int i = 0; i < m_measurements.size(); ++i) {
-        series->append(i, m_measurements[i]);
+    for (int i = 0; i < itemValue.size(); ++i) {
+        series->append(i, itemValue[i]);
     }
 
     chart->addSeries(series);
 
     QBarCategoryAxis *axisX = new QBarCategoryAxis();
-    axisX->append(m_location);
-    axisX->setLabelsAngle(-45);  // Rotate labels for better readability
+    axisX->append(itemLocation);
+    axisX->setLabelsAngle(-45); 
 
     QValueAxis *axisY = new QValueAxis();
     axisY->setTitleText("ug/l");
     axisY->setMin(0);
-    axisY->setMax(*std::max_element(m_measurements.begin(), m_measurements.end()) * 1.2);
+    axisY->setMax(*std::max_element(itemValue.begin(), itemValue.end()) * 1.2);
 
     chart->addAxis(axisX, Qt::AlignBottom);
     chart->addAxis(axisY, Qt::AlignLeft);
@@ -95,7 +116,8 @@ QChartView* ComplianceDashboardItem::createScrollableLineChart() {
     series->attachAxis(axisX);
     series->attachAxis(axisY);
 
-    QChartView *chartView = new QChartView(chart);
+    // Use CustomChartView instead of QChartView
+    CustomChartView *chartView = new CustomChartView(chart);
     chartView->setRenderHint(QPainter::Antialiasing);
     chartView->setFixedHeight(300);
 
@@ -105,13 +127,13 @@ QChartView* ComplianceDashboardItem::createScrollableLineChart() {
 
 QChartView* ComplianceDashboardItem::createGroupedBarChart() {
     QChart *chart = new QChart();
-    chart->setTitle(QString("%1 Measurements Comparison").arg(m_pollutantName));
+    chart->setTitle(QString("%1 Measurements Comparison").arg(itemPollutant));
 
     QHorizontalBarSeries *series = new QHorizontalBarSeries();
     QBarSet *measurementSet = new QBarSet("Measurement");
 
     QVector<double> scaledMeasurements;
-    for (double value : m_measurements) {
+    for (double value : itemValue) {
         scaledMeasurements.append(value); 
     }
 
@@ -122,7 +144,7 @@ QChartView* ComplianceDashboardItem::createGroupedBarChart() {
     if (allSame) {
         // All values are identical
         *measurementSet << scaledMeasurements[0];
-        chart->setTitle(QString("%1 Measurements Comparison (All Values Same)").arg(m_pollutantName));
+        chart->setTitle(QString("%1 Measurements Comparison (All Values Same)").arg(itemPollutant));
         chart->addSeries(series);
 
         QBarCategoryAxis *axisY = new QBarCategoryAxis();
@@ -149,8 +171,8 @@ QChartView* ComplianceDashboardItem::createGroupedBarChart() {
         int minIndex = scaledMeasurements.indexOf(minValue);
 
         QVector<QString> filteredLocations;
-        filteredLocations.append(m_location[maxIndex]);
-        filteredLocations.append(m_location[minIndex]);
+        filteredLocations.append(itemLocation[maxIndex]);
+        filteredLocations.append(itemLocation[minIndex]);
 
         *measurementSet << maxValue << minValue;
 
@@ -180,10 +202,8 @@ QChartView* ComplianceDashboardItem::createGroupedBarChart() {
 }
 
 
-
-
 QTableWidget* ComplianceDashboardItem::createSummaryTable() {
-    QTableWidget *table = new QTableWidget(m_location.size() + 1, 4);
+    QTableWidget *table = new QTableWidget(itemLocation.size() + 1, 4);
     table->setHorizontalHeaderLabels({"Location", "Measurement", "Threshold", "Compliance"});
 
     // Header row formatting
@@ -194,14 +214,14 @@ QTableWidget* ComplianceDashboardItem::createSummaryTable() {
     }
 
     // Populate table with location data
-    for (int i = 0; i < m_location.size(); ++i) {
-        QTableWidgetItem *locationItem = new QTableWidgetItem(m_location[i]);
-        QTableWidgetItem *measurementItem = new QTableWidgetItem(QString::number(m_measurements[i]));
-        QTableWidgetItem *thresholdItem = new QTableWidgetItem(QString::number(m_safeThreshold));
-        QTableWidgetItem *complianceItem = new QTableWidgetItem(m_isComply[i] ? "Compliant" : "Non-Compliant");
+    for (int i = 0; i < itemLocation.size(); ++i) {
+        QTableWidgetItem *locationItem = new QTableWidgetItem(itemLocation[i]);
+        QTableWidgetItem *measurementItem = new QTableWidgetItem(QString::number(itemValue[i]));
+        QTableWidgetItem *thresholdItem = new QTableWidgetItem(QString::number(itemThreshold));
+        QTableWidgetItem *complianceItem = new QTableWidgetItem(itemIsComply[i] ? "Compliant" : "Non-Compliant");
         
         // Color code compliance
-        complianceItem->setBackground(m_isComply[i] ? QColor(200, 255, 200) : QColor(255, 200, 200));
+        complianceItem->setBackground(itemIsComply[i] ? QColor(200, 255, 200) : QColor(255, 200, 200));
 
         table->setItem(i, 0, locationItem);
         table->setItem(i, 1, measurementItem);
@@ -213,43 +233,30 @@ QTableWidget* ComplianceDashboardItem::createSummaryTable() {
     return table;
 }
 
-void ComplianceDashboardItem::updateData(
-    const QVector<QString>& locations,
-    double safeThreshold,
-    const QVector<double>& measurements,
-    const QVector<bool>& isCompliance
-    ) {
-    m_location = locations; // Update locations
-    m_safeThreshold = safeThreshold;
-    m_measurements = measurements;
+void ComplianceDashboardItem::createGraphs() {
+    // Create a tab widget to host different views
+    QTabWidget *tabWidget = new QTabWidget(this);
 
-    // Recreate UI with new data
-    QLayoutItem *child;
-    while ((child = m_layout->takeAt(0)) != nullptr) {
-        delete child->widget();
-        delete child;
-    }
-    createMainWidget();
+    // 1. Line Chart View (Scrollable)
+    QChartView *lineChartView = createLineChart();
+    tabWidget->addTab(lineChartView, "Trend Chart");
+
+    // 2. Bar Chart View 
+    QChartView *barChartView = createGroupedBarChart();
+    tabWidget->addTab(barChartView, "Comparison Chart");
+
+    // 3. Summary Table View
+    QTableWidget *summaryTable = createSummaryTable();
+    tabWidget->addTab(summaryTable, "Data Summary");
+
+    itemLayout->addWidget(tabWidget);
 }
 
-QString ComplianceDashboardItem::determineComplianceStatus(
-    const QVector<double>& measurements,
-    double safeThreshold,
-    const QVector<bool>& isComply
-    ) {
-    int exceedanceCount = std::count_if(measurements.begin(), measurements.end(),
-                                        [safeThreshold](double val) { return val > safeThreshold; });
-    int statusCount = std::count_if(isComply.begin(), isComply.end(),
-                                    [safeThreshold](double val) { return val == true; });
-    double exceedancePercentage = (double)exceedanceCount / measurements.size() * 100;
-    double statusPercentage = statusCount/isComply.size() * 100;
-    if (exceedancePercentage <= 10 && statusPercentage >= 50) return "Compliant";
-    if (exceedancePercentage <= 25 && statusPercentage >= 50) return "Caution";
-    return "Non-Compliant";
-}
 
-QColor ComplianceDashboardItem::getComplianceColor(const QString& status) {
-    if (status == "Compliant") return QColor(0, 180, 0);     // Green
-    if (status == "Caution") return QColor(255, 165, 0);     // Orange
-    return QColor(255, 0, 0);                               // Red
-}
+/*
+search?
+sorting
+location and pollutant filter
+pop up
+loading time
+*/
