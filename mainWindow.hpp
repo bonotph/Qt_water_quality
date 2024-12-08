@@ -12,6 +12,7 @@ class QHBoxLayout;
 class SampleModel;
 class TableWidget;
 class FlourinatedCompounds;
+class PollutantOverview;
 class ComplianceDashboard;
 
 class MainDashboard: public QMainWindow
@@ -37,7 +38,9 @@ class MainDashboard: public QMainWindow
 
     TableWidget* tableWidget;
     FlourinatedCompounds* flourinatedCompounds;
+    PollutantOverview* pollutantOverview;
     ComplianceDashboard* complianceDashboard;
+
 
     QHBoxLayout* headerLayout;
 };

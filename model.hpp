@@ -16,6 +16,7 @@ class SampleModel: public QAbstractTableModel
     int columnCount(const QModelIndex& index) const { return 7; }
     QVariant data(const QModelIndex&, int) const;
     QVariant headerData(int, Qt::Orientation, int) const;
+    QStringList getUniquePollutants() const;
 
     /*double meanDepth() const { return dataset.meanDepth(); }
     double meanMagnitude() const { return dataset.meanMagnitude(); }*/

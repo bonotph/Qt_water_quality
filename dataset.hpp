@@ -2,6 +2,8 @@
 #pragma once
 
 #include <vector>
+#include <set>
+#include <string>
 #include "sample.hpp"
 
 class SampleDataset
@@ -12,6 +14,7 @@ class SampleDataset
     void loadData(const std::string&);
     int size() const { return data.size(); }
     Sample operator[](int index) const { return data.at(index); }
+    std::set<std::string> getUniquePollutants() const;
     /*Sample strongest() const;
     Sample shallowest() const;
     double meanDepth() const;

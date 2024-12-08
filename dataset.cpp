@@ -34,3 +34,14 @@ void SampleDataset::checkDataExists() const
     throw std::runtime_error("Dataset is empty!");
   }
 }
+
+// Implementation of getUniquePollutants()
+std::set<std::string> SampleDataset::getUniquePollutants() const {
+    std::set<std::string> uniquePollutants;
+
+    for (const auto& sample : data) {
+        uniquePollutants.insert(sample.getParameter());  // Add parameter to the set
+    }
+
+    return uniquePollutants;  // Return the set of unique pollutants
+}

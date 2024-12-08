@@ -1,7 +1,7 @@
 
 #include <QtWidgets>
 #include "mainWindow.hpp"
-
+#include "pollutantOverview.hpp"
 #include "tableWindow.hpp"
 #include "flourinatedCompounds.hpp"
 #include "compliance.hpp"
@@ -29,6 +29,7 @@ void MainDashboard::createWidgets()
   mainWidget = new QStackedWidget();
   tableWidget = new TableWidget(sharedModel);
   flourinatedCompounds = new FlourinatedCompounds(sharedModel);
+  pollutantOverview = new PollutantOverview(sharedModel);
   complianceDashboard = new ComplianceDashboard(sharedModel);
 
   setCentralWidget(mainWidget);
@@ -60,7 +61,7 @@ void MainDashboard::createPages()
 {
   //exchange for real pages later
   mainWidget->addWidget(new QWidget());  
-  mainWidget->addWidget(new QWidget());
+  mainWidget->addWidget(pollutantOverview);
   mainWidget->addWidget(new QWidget());
   mainWidget->addWidget(new QWidget());
   mainWidget->addWidget(flourinatedCompounds);

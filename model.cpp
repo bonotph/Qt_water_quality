@@ -59,3 +59,13 @@ QVariant SampleModel::headerData(int section, Qt::Orientation orientation, int r
   }
 }
 
+QStringList SampleModel::getUniquePollutants() const {
+    QStringList uniqueList;
+
+    for (const auto& pollutant : dataset.getUniquePollutants()) {
+        uniqueList.append(QString::fromStdString(pollutant));
+    }
+
+    uniqueList.sort();
+    return uniqueList;
+}
