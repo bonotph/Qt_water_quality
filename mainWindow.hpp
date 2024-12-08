@@ -14,6 +14,7 @@ class TableWidget;
 class FlourinatedCompounds;
 class PollutantOverview;
 class ComplianceDashboard;
+class LitterIndicator;
 
 class MainDashboard: public QMainWindow
 {
@@ -40,6 +41,7 @@ class MainDashboard: public QMainWindow
     FlourinatedCompounds* flourinatedCompounds;
     PollutantOverview* pollutantOverview;
     ComplianceDashboard* complianceDashboard;
+    LitterIndicator* litterIndicator;
 
 
     QHBoxLayout* headerLayout;

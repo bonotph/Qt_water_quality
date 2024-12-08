@@ -5,6 +5,7 @@
 #include "tableWindow.hpp"
 #include "flourinatedCompounds.hpp"
 #include "compliance.hpp"
+#include "litterindicator.hpp"
 
 MainDashboard::MainDashboard():QMainWindow()
 {
@@ -31,7 +32,7 @@ void MainDashboard::createWidgets()
   flourinatedCompounds = new FlourinatedCompounds(sharedModel);
   pollutantOverview = new PollutantOverview(sharedModel);
   complianceDashboard = new ComplianceDashboard(sharedModel);
-
+  litterIndicator = new LitterIndicator(sharedModel);
   setCentralWidget(mainWidget);
 }
 
@@ -63,7 +64,7 @@ void MainDashboard::createPages()
   mainWidget->addWidget(new QWidget());  
   mainWidget->addWidget(pollutantOverview);
   mainWidget->addWidget(new QWidget());
-  mainWidget->addWidget(new QWidget());
+  mainWidget->addWidget(litterIndicator);
   mainWidget->addWidget(flourinatedCompounds);
   mainWidget->addWidget(complianceDashboard);
 
