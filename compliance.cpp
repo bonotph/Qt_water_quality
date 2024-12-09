@@ -14,39 +14,6 @@ ComplianceDashboard::ComplianceDashboard(SampleModel* model, QWidget *parent)
     createFilter();
 }
 
-void ComplianceDashboard::createFilter(){
-    if (!mainLayout) {
-        qDebug() << "Error: No main layout";
-        return;
-    }
-
-    //fliter widget
-    QWidget* filterWidget = new QWidget(this);
-    QHBoxLayout* filterLayout = new QHBoxLayout(filterWidget);
-
-    // compliance filter combo box
-    complianceFilter = new QComboBox(this);
-    complianceFilter->addItems({"All", "Compliant", "Non-Compliant"});
-    complianceFilter->setMinimumWidth(300); 
-    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-
-    // apply and reset buttons
-    QPushButton* applyButton = new QPushButton("Apply", this);
-    QPushButton* resetButton = new QPushButton("Reset", this);
-    applyButton->setFixedWidth(80);  // Set a fixed, shorter width
-    resetButton->setFixedWidth(80);  // Set a fixed, shorter width
-
-    // add to layout
-    filterLayout->addWidget(complianceFilter);
-    filterLayout->addWidget(applyButton);
-    filterLayout->addWidget(resetButton);
-    mainLayout->insertWidget(1, filterWidget);
-
-    // connect signals and slots
-    connect(applyButton, &QPushButton::clicked, this, &ComplianceDashboard::applyFilter);
-    connect(resetButton, &QPushButton::clicked, this, &ComplianceDashboard::resetFilter);
-}
-
 void ComplianceDashboard::createWidgets(){
 /*     if (!mainLayout) {
         qDebug() << "Error: No main layout";
@@ -123,14 +90,63 @@ void ComplianceDashboard::getData(){
 }
 
 
+void ComplianceDashboard::createFilter() {
+    if (!mainLayout) {
+        qDebug() << "Error: No main layout";
+        return;
+    }
+
+    // filter widget
+    QWidget* filterWidget = new QWidget(this);
+    QHBoxLayout* filterLayout = new QHBoxLayout(filterWidget);
+
+    // search input
+    searchLineEdit = new QLineEdit(this);
+    searchLineEdit->setPlaceholderText("Search pollutants or sites...");
+    searchLineEdit->setMinimumWidth(200);
+
+    // compliance filter combo box
+    complianceFilter = new QComboBox(this);
+    complianceFilter->addItems({"All", "Compliant", "Non-Compliant"});
+    complianceFilter->setMinimumWidth(150);
+
+    //sort(dummy)
+    sortComboBox = new QComboBox(this);
+    sortComboBox->addItems({"No Sort(dummy)", "Average (Low to High)", "Average (High to Low)"});
+    sortComboBox->setMinimumWidth(150);
+
+    // apply and reset buttons
+    QPushButton* resetButton = new QPushButton("Reset", this);
+    resetButton->setFixedWidth(80);
+    locationFilter = new QComboBox(this);
+    locationFilter->addItems({"All Locations (dummy)", "Yorkshire"});
+
+    // add to layout
+    filterLayout->addWidget(new QLabel("Search:"));
+    filterLayout->addWidget(searchLineEdit);
+    filterLayout->addWidget(new QLabel("Compliance:"));
+    filterLayout->addWidget(complianceFilter);
+    filterLayout->addWidget(locationFilter);
+    filterLayout->addWidget(sortComboBox);
+    filterLayout->addStretch();
+    filterLayout->addWidget(resetButton);
+    mainLayout->insertWidget(1, filterWidget);
+
+    // connect signals and slots
+    connect(searchLineEdit, &QLineEdit::textChanged, this, &ComplianceDashboard::applyFilter);
+    connect(complianceFilter, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &ComplianceDashboard::applyFilter);
+    connect(resetButton, &QPushButton::clicked, this, &ComplianceDashboard::resetFilter);
+}
+
+
 void ComplianceDashboard::addData(
     const QVector<QString>& locations,
     const QString& pollutants,
     double thresholds,
-    const QVector<double>& values, 
+    const QVector<double>& values,
     const QVector<bool>& compliances
-){
-    if(items.contains(pollutants)){
+) {
+    if(items.contains(pollutants)) {
         items[pollutants].item->updateData(locations, thresholds, values, compliances);
         return;
     }
@@ -144,33 +160,64 @@ void ComplianceDashboard::addData(
         this
     );
     scrollLayout->addWidget(item);
-    items[pollutants].item=item;
+    items[pollutants].item = item;
     items[pollutants].isCompliant = item->complianceStatus;
+    items[pollutants].averageValue = item->averageValue;
 }
 
 
-void ComplianceDashboard::applyFilter(){
-QString selectedCompliance = complianceFilter->currentText();
+void ComplianceDashboard::applyFilter() {
+    QString searchText = searchLineEdit->text().toLower();
+    QString selectedCompliance = complianceFilter->currentText();
 
-for (auto it = items.begin(); it != items.end(); ++it) {
-    QString key = it.key();
-    ComplianceData& data = it.value();
-    bool show = true;
+    for (auto it = items.begin(); it != items.end(); ++it) {
+        QString key = it.key();
+        ComplianceData& data = it.value();
+        bool show = true;
 
-    if (selectedCompliance != "All") {
-        bool shouldBeCompliant = (selectedCompliance == "Compliant");
-        if (data.isCompliant != shouldBeCompliant) {
-            show = false;
+        // Search filter
+        if (!searchText.isEmpty()) {
+            bool matchFound = false;
+            
+            // Check if pollutant name matches
+            if (key.toLower().contains(searchText)) {
+                matchFound = true;
+            }
+            
+            // Check if any location matches
+            for (const QString& location : data.item->getLocations()) {
+                if (location.toLower().contains(searchText)) {
+                    matchFound = true;
+                    break;
+                }
+            }
+
+            if (!matchFound) {
+                show = false;
+            }
         }
+
+        // Compliance filter
+        if (show && selectedCompliance != "All") {
+            bool shouldBeCompliant = (selectedCompliance == "Compliant");
+            if (data.isCompliant != shouldBeCompliant) {
+                show = false;
+            }
+        }
+
+        data.item->setVisible(show);
     }
-    data.item->setVisible(show);
-}
 }
 
+void ComplianceDashboard::resetFilter() {
+    // Reset search line edit
+    searchLineEdit->clear();
+    
+    // Reset compliance filter
+    complianceFilter->setCurrentText("All");
 
-void ComplianceDashboard::resetFilter(){
-complianceFilter->setCurrentText("All");
-for (auto& data : items) {
-    data.item->setVisible(true);
-}
+    // Show all items
+    for (auto& data : items) {
+        data.item->setVisible(true);
+    }
 }

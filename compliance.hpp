@@ -16,6 +16,9 @@ private:
     void createFilter();
     void applyFilter();
     void resetFilter();
+    QComboBox* sortComboBox;
+    void sortItems(const QString& criteria);
+    double calculateAverage(const QVector<double>& values);
 
     SampleModel* dataModel;
     
@@ -23,15 +26,18 @@ private:
     QScrollArea* scrollArea;
     QVBoxLayout* scrollLayout;
     QWidget* scrollContent;
+    QLineEdit* searchLineEdit;
 
     struct ComplianceData {
         ComplianceDashboardItem* item;
         QString location;
         bool isCompliant;
+        double averageValue; 
     };
 
     QMap<QString, ComplianceData> items;
 
     QComboBox* complianceFilter;
+    QComboBox* locationFilter;
 
 };

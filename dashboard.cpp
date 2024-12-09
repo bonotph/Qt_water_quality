@@ -124,10 +124,8 @@ QChartView* Dashboard::createSummaryChart(const QString& title, const QVector<do
     chart->setAnimationOptions(QChart::SeriesAnimations);
 
     if (title == "Compliance Status") {
-        // Create a horizontal stacked bar series
         QHorizontalStackedBarSeries* series = new QHorizontalStackedBarSeries();
         
-        // Create dummy count list to trick the chart into different colors
         QList<qreal> dummyCount;
         QStringList complianceNames = {"Compliant", "Non-Compliant"};
         QList<QColor> colors = {QColor(0, 128, 0), QColor(255, 0, 0)}; // Green, Red
