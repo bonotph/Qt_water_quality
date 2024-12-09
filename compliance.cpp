@@ -22,7 +22,7 @@ void ComplianceDashboard::createWidgets(){
 
     //basic layout
     mainLayout = new QVBoxLayout(this);
-    QLabel* title = new QLabel("Pollutant Compliance Dashboard", this);
+    QLabel* title = new QLabel(tr("Pollutant Compliance Dashboard"), this);
     title->setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;");
     scrollContent = new QWidget(this);
     scrollLayout = new QVBoxLayout(scrollContent);
@@ -96,29 +96,29 @@ void ComplianceDashboard::createFilter() {
 
     // search input
     searchLineEdit = new QLineEdit(this);
-    searchLineEdit->setPlaceholderText("Search pollutants or sites...");
+    searchLineEdit->setPlaceholderText(tr("Search pollutants or sites..."));
     searchLineEdit->setMinimumWidth(200);
 
     // compliance filter combo box
     complianceFilter = new QComboBox(this);
-    complianceFilter->addItems({"All", "Compliant", "Non-Compliant"});
+    complianceFilter->addItems({tr("All"), tr("Compliant"), tr("Non-Compliant")});
     complianceFilter->setMinimumWidth(150);
 
     //sort(dummy)
     sortComboBox = new QComboBox(this);
-    sortComboBox->addItems({"No Sort(dummy)", "Average (Low to High)", "Average (High to Low)"});
+    sortComboBox->addItems({tr("No Sort(dummy)"), tr("Average (Low to High)"), tr("Average (High to Low)")});
     sortComboBox->setMinimumWidth(150);
 
     // apply and reset buttons
-    QPushButton* resetButton = new QPushButton("Reset", this);
+    QPushButton* resetButton = new QPushButton(tr("Reset"), this);
     resetButton->setFixedWidth(80);
     locationFilter = new QComboBox(this);
-    locationFilter->addItems({"All Locations (dummy)", "Yorkshire"});
+    locationFilter->addItems({tr("All Locations (dummy)"), tr("Yorkshire")});
 
     // add to layout
-    filterLayout->addWidget(new QLabel("Search:"));
+    filterLayout->addWidget(new QLabel(tr("Search:")));
     filterLayout->addWidget(searchLineEdit);
-    filterLayout->addWidget(new QLabel("Compliance:"));
+    filterLayout->addWidget(new QLabel(tr("Compliance:")));
     filterLayout->addWidget(complianceFilter);
     filterLayout->addWidget(locationFilter);
     filterLayout->addWidget(sortComboBox);

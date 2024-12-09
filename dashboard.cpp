@@ -9,17 +9,17 @@ Dashboard::Dashboard(QTabWidget* tabWidget, SampleModel* sharedModel, QWidget* p
 
 void Dashboard::createCards()
 {
-    titleLabel = new QLabel("Dashboard Overview");
+    titleLabel = new QLabel(tr("Dashboard Overview"));
     titleLabel->setAlignment(Qt::AlignLeft);
     titleLabel->setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px;");
     timeFilter = new QComboBox();
-    timeFilter->addItems({"last day","last month","last year"});
+    timeFilter->addItems({tr("last day"),tr("last month"),tr("last year")});
     
 
-    pollutantOverviewCard = new QPushButton("Pollutant Overview");
-    litterIndicatorCard = new QPushButton("Environmental Litter");
-    fluorinatedCompoundsCard = new QPushButton("Fluorinated Compounds");
-    complianceDashboardCard = new QPushButton("Compliance Dashboard");
+    pollutantOverviewCard = new QPushButton(tr("Pollutant Overview"));
+    litterIndicatorCard = new QPushButton(tr("Environmental Litter"));
+    fluorinatedCompoundsCard = new QPushButton(tr("Fluorinated Compounds"));
+    complianceDashboardCard = new QPushButton(tr("Compliance Dashboard"));
 
     const QString cardStyle = R"(
         QPushButton {
@@ -81,24 +81,24 @@ void Dashboard::setupLayout()
 
     // summary charts
     QChartView* pollutantChart = createSummaryChart(
-        "Pollutant Trends",
+        tr("Pollutant Trends"),
         {30, 50, 70, 60},
-        {"Jan", "Feb", "Mar", "Apr"}
+        {tr("Jan"), tr("Feb"), tr("Mar"), tr("Apr")}
     );
     QChartView* litterChart = createSummaryChart(
-        "Litter Levels",
+        tr("Litter Levels"),
         {15, 25, 35, 40},
-        {"Beach", "Lake", "River", "Sea"}
+        {tr("Beach"), tr("Lake"), tr("River"), tr("Sea")}
     );
     QChartView* fluorinatedChart = createSummaryChart(
-        "Fluorinated Compounds",
+        tr("Fluorinated Compounds"),
         {1.2, 2.8, 1.9, 3.4},
-        {"Site A", "Site B", "Site C", "Site D"}
+        {tr("Site A"), tr("Site B"), tr("Site C"), tr("Site D")}
     );
     QChartView* complianceChart = createSummaryChart(
-        "Compliance Status",
+        tr("Compliance Status"),
         {complianceTrueCount, complianceFalseCount},
-        {"Compliant", "Non-Compliant"}
+        {tr("Compliant"), tr("Non-Compliant")}
     );
 
     // add charts and layouts
@@ -127,7 +127,7 @@ QChartView* Dashboard::createSummaryChart(const QString& title, const QVector<do
         QHorizontalStackedBarSeries* series = new QHorizontalStackedBarSeries();
         
         QList<qreal> dummyCount;
-        QStringList complianceNames = {"Compliant", "Non-Compliant"};
+        QStringList complianceNames = {tr("Compliant"), tr("Non-Compliant")};
         QList<QColor> colors = {QColor(0, 128, 0), QColor(255, 0, 0)}; // Green, Red
 
         for(int i = 0; i < data.size(); ++i) {

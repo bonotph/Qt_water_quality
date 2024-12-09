@@ -20,13 +20,13 @@ MainDashboard::MainDashboard():QMainWindow()
   createActions();
 
   setMinimumSize(1000, 800);
-  setWindowTitle("Water Quality Monitor");
+  setWindowTitle(tr("Water Quality Monitor"));
 
 }
 
 void MainDashboard::createWidgets()
 {
-  home = new QPushButton("Home");
+  home = new QPushButton(tr("Home"));
   home->setFixedWidth(80);
   header = new QWidget();
   tabBar = new QTabWidget();
@@ -50,19 +50,19 @@ void MainDashboard::createTabBar()
     QWidget* spacer = new QWidget();
     spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     topToolBar->addWidget(spacer);
-    langChoice->addItems({"English", "French", "German", "Spanish", "Italian"});
+    langChoice->addItems({tr("English"), tr("French"), tr("German"), tr("Spanish"), tr("Italian")});
     topToolBar->addWidget(langChoice);
 
-    tabBar->addTab(new QWidget(), "Dashboard");
-    tabBar->addTab(new QWidget(), "Pollutant Overview");
-    tabBar->addTab(new QWidget(), "Persistant Organic Pollutants");
-    tabBar->addTab(new QWidget(), "Environmental Litter");
-    tabBar->addTab(new QWidget(), "Flourinated Compounds");
-    tabBar->addTab(new QWidget(), "Compliance Dashboard");
-    tabBar->addTab(new QWidget(), "Table");
+    tabBar->addTab(new QWidget(), tr("Dashboard"));
+    tabBar->addTab(new QWidget(), tr("Pollutant Overview"));
+    tabBar->addTab(new QWidget(), tr("Persistant Organic Pollutants"));
+    tabBar->addTab(new QWidget(), tr("Environmental Litter"));
+    tabBar->addTab(new QWidget(), tr("Flourinated Compounds"));
+    tabBar->addTab(new QWidget(), tr("Compliance Dashboard"));
+    tabBar->addTab(new QWidget(), tr("Table"));
 
     // Create shortcut reminder label
-    shortcutReminder = new QLabel("Keyboard shortcuts: Press 1-7 to switch tabs");
+    shortcutReminder = new QLabel(tr("Keyboard shortcuts: Press 1-7 to switch tabs"));
     shortcutReminder->setAlignment(Qt::AlignCenter);
     shortcutReminder->setStyleSheet("QLabel { color: #666666; font-size: 11px; padding: 2px; }");
 

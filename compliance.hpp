@@ -16,12 +16,9 @@ private:
     void createFilter();
     void applyFilter();
     void resetFilter();
-    QComboBox* sortComboBox;
-    void sortItems(const QString& criteria);
-    double calculateAverage(const QVector<double>& values);
-
-    SampleModel* dataModel;
     
+    QComboBox* sortComboBox;
+    SampleModel* dataModel;
     QVBoxLayout* mainLayout;
     QScrollArea* scrollArea;
     QVBoxLayout* scrollLayout;

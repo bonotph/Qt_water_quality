@@ -36,7 +36,6 @@ private:
 
 };
 
-// Add this as a separate class in your header file
 class ChartClickHandler : public QObject {
 public:
     ChartClickHandler(QTabWidget* tabWidget, int tabIndex) 

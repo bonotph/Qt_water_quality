@@ -31,7 +31,7 @@ void ComplianceDashboardItem::createWidgets() {
 
     // Only add details button if NOT compliant
     if (!complianceStatus) {
-        QPushButton* detailsButton = new QPushButton("View Non-Compliance Details", this);
+        QPushButton* detailsButton = new QPushButton(tr("View Non-Compliance Details"), this);
         detailsButton->setStyleSheet("background-color: #FF4444; color: white; font-weight: bold;");
         connect(detailsButton, &QPushButton::clicked, this, &ComplianceDashboardItem::showNonComplianceDetails);
         graphLayout->addWidget(detailsButton);
@@ -39,7 +39,7 @@ void ComplianceDashboardItem::createWidgets() {
 
     // compliance status
     statusLabel = new QLabel(this);
-    statusLabel->setText(QString("Compliance Status: %1").arg(status[0]));
+    statusLabel->setText(QString(tr("Compliance Status: %1")).arg(status[0]));
     statusLabel->setStyleSheet(QString(
                                      "font-weight: bold; padding: 5px; border-radius: 5px; "
                                      "background-color: %1; color: white;"
@@ -77,9 +77,9 @@ QList<QString> ComplianceDashboardItem::determineComplianceStatus(
                                     [](bool val) { return val == true; }); // compare with compliance data
     double average = std::round((std::accumulate(measurements.begin(), measurements.end(), 0.0)/measurements.size())*100.0)/100.0;
     double statusPercentage = std::round(((double)statusCount/isComply.size() * 100)*100.0)/100.0;
-    if (statusPercentage >= 50) return {"Compliant", QString::number(statusPercentage),QString::number(average)};
-    if (statusPercentage >= 50) return {"Caution", QString::number(statusPercentage),QString::number(average)};
-    return {"Non-compliant", QString::number(statusPercentage),QString::number(average)};
+    if (statusPercentage >= 50) return {tr("Compliant"), QString::number(statusPercentage),QString::number(average)};
+    if (statusPercentage >= 50) return {tr("Caution"), QString::number(statusPercentage),QString::number(average)};
+    return {tr("Non-compliant"), QString::number(statusPercentage),QString::number(average)};
 }
 
 
@@ -92,7 +92,7 @@ QColor ComplianceDashboardItem::getComplianceColor(const QString& status) {
 void ComplianceDashboardItem::createGraphs() {
 
     QTableWidget *table = new QTableWidget(itemLocation.size() + 1, 3);
-    table->setHorizontalHeaderLabels({"Location", "Measurement", "Compliance"});
+    table->setHorizontalHeaderLabels({tr("Location"), tr("Measurement"), tr("Compliance")});
 
     // Header row formatting
     QFont headerFont = table->horizontalHeaderItem(0)->font();
@@ -105,7 +105,7 @@ void ComplianceDashboardItem::createGraphs() {
     for (int i = 0; i < itemLocation.size(); i++) {
         QTableWidgetItem *locationItem = new QTableWidgetItem(itemLocation[i]);
         QTableWidgetItem *measurementItem = new QTableWidgetItem(QString::number(itemValue[i]));
-        QTableWidgetItem *complianceItem = new QTableWidgetItem(itemIsComply[i] ? "Compliant" : "Non-Compliant");
+        QTableWidgetItem *complianceItem = new QTableWidgetItem(itemIsComply[i] ? tr("Compliant") : tr("Non-Compliant"));
         
         // Color code compliance
         complianceItem->setBackground(itemIsComply[i] ? QColor(200, 255, 200) : QColor(255, 200, 200));
@@ -123,7 +123,7 @@ void ComplianceDashboardItem::createGraphs() {
 
 void ComplianceDashboardItem::createNumbers(QString percentage, QString average){
     numbers = new QLabel();
-    numbers->setText("Compliance ratio: \n" + percentage + '%' + "\n\nAverage amount \nof pollutant:\n " + average + "ug/l");
+    numbers->setText(tr("Compliance ratio: \n") + percentage + '%' + tr("\n\nAverage amount \nof pollutant:\n ") + average + tr("ug/l"));
     numbers->setMinimumWidth(35);
     numbers->setAlignment(Qt::AlignCenter);
     numbers->setStyleSheet("font-size: 18px; font-weight: bold;");
@@ -131,12 +131,12 @@ void ComplianceDashboardItem::createNumbers(QString percentage, QString average)
 }
 void ComplianceDashboardItem::showNonComplianceDetails() {
     QDialog* detailsDialog = new QDialog(this);
-    detailsDialog->setWindowTitle("Non-Compliance Details: " + itemPollutant);
+    detailsDialog->setWindowTitle(tr("Non-Compliance Details: ") + itemPollutant);
     
     QVBoxLayout* dialogLayout = new QVBoxLayout(detailsDialog);
     
     // Title and overview
-    QLabel* titleLabel = new QLabel("<h2>Non-Compliance Details</h2>", detailsDialog);
+    QLabel* titleLabel = new QLabel(tr("<h2>Non-Compliance Details</h2>"), detailsDialog);
     titleLabel->setAlignment(Qt::AlignCenter);
     dialogLayout->addWidget(titleLabel);
 
@@ -148,10 +148,10 @@ void ComplianceDashboardItem::showNonComplianceDetails() {
 
     // Compliance Statistics
     QLabel* statsLabel = new QLabel(QString(
-        "<b>Compliance Statistics:</b><br>"
+        tr("<b>Compliance Statistics:</b><br>"
         "Average Pollutant Level: %1<br>"
         "Compliance Ratio: %2%<br>"
-        "Threshold: %3"
+        "Threshold: %3")
     ).arg(QString::number(averageValue), 
           QString::number(percentageValue)));
     dialogLayout->addWidget(statsLabel);
@@ -164,7 +164,7 @@ void ComplianceDashboardItem::showNonComplianceDetails() {
     }
 
     // Detailed Location Breakdown
-    QLabel* locationLabel = new QLabel("<b>Most Polluted Location:</b>", detailsDialog);
+    QLabel* locationLabel = new QLabel(tr("<b>Most Polluted Location:</b>"), detailsDialog);
     dialogLayout->addWidget(locationLabel);
     double maxvalue;
     int locationindex;
@@ -174,19 +174,19 @@ void ComplianceDashboardItem::showNonComplianceDetails() {
             locationindex=i;
         }
     }
-    QLabel* locationItem = new QLabel(QString("• %1 (Measurement: %2)")
+    QLabel* locationItem = new QLabel(QString(tr("• %1 (Measurement: %2)"))
     .arg(itemLocation[locationindex])
     .arg(itemValue[locationindex]), detailsDialog);
     dialogLayout->addWidget(locationItem);
 
     // Recommended Actions
-    QLabel* actionLabel = new QLabel("<b>Recommended Actions:</b>", detailsDialog);
+    QLabel* actionLabel = new QLabel(tr("<b>Recommended Actions:</b>"), detailsDialog);
     dialogLayout->addWidget(actionLabel);
     QStringList actions = {
-        "Conduct detailed investigation on site",
-        "Implement source-addressing water treatment solutions",
-        "Review current measures of pollution control",
-        "Apply constant monitoring and evaluations"
+        tr("Conduct detailed investigation on site"),
+        tr("Implement source-addressing water treatment solutions"),
+        tr("Review current measures of pollution control"),
+        tr("Apply constant monitoring and evaluations")
     };
     for (const QString& action : actions) {
         QLabel* actionItem = new QLabel("• " + action, detailsDialog);
@@ -194,7 +194,7 @@ void ComplianceDashboardItem::showNonComplianceDetails() {
     }
 
     // Close button
-    QPushButton* closeButton = new QPushButton("Close", detailsDialog);
+    QPushButton* closeButton = new QPushButton(tr("Close"), detailsDialog);
     connect(closeButton, &QPushButton::clicked, detailsDialog, &QDialog::accept);
     dialogLayout->addWidget(closeButton);
 
@@ -206,38 +206,38 @@ void ComplianceDashboardItem::showNonComplianceDetails() {
 QStringList ComplianceDashboardItem::getNonComplianceCauses() {
     // map pollutants to causes
     QMap<QString, QStringList> pollutantCauses = {
-        {"Nitrates", {
-            "Excessive fertilizer use",
-            "Agricultural runoff",
-            "Sewage overflow",
-            "Inadequate water treatment"
+        {tr("Nitrates"), {
+            tr("Excessive fertilizer use"),
+            tr("Agricultural runoff"),
+            tr("Sewage overflow"),
+            tr("Inadequate water treatment")
         }},
         {"Lead", {
-            "Old plumbing infrastructure",
-            "Industrial emissions",
-            "Soil contamination",
-            "Historical industrial activities"
+            tr("Old plumbing infrastructure"),
+            tr("Industrial emissions"),
+            tr("Soil contamination"),
+            tr("Historical industrial activities")
         }},
         {"Mercury", {
-            "Industrial process emissions",
-            "Coal-fired power plant discharges",
-            "Improper waste disposal",
-            "Natural geological sources"
+            tr("Industrial process emissions"),
+            tr("Coal-fired power plant discharges"),
+            tr("Improper waste disposal"),
+            tr("Natural geological sources")
         }},
         {"Arsenic", {
-            "Geological formations",
-            "Mining and industrial waste",
-            "Pesticide residues",
-            "Groundwater contamination"
+            tr("Geological formations"),
+            tr("Mining and industrial waste"),
+            tr("Pesticide residues"),
+            tr("Groundwater contamination")
         }}
     };
 
     // default
     QStringList genericCauses = {
-        "Environmental contamination",
-        "Inadequate pollution control",
-        "Industrial or agricultural activities",
-        "Systemic infrastructure issues"
+        tr("Environmental contamination"),
+        tr("Inadequate pollution control"),
+        tr("Industrial or agricultural activities"),
+        tr("Systemic infrastructure issues")
     };
 
     return pollutantCauses.value(itemPollutant, genericCauses);
