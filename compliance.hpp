@@ -8,7 +8,7 @@ class ComplianceDashboard: public QWidget {
 public:
     ComplianceDashboard(SampleModel* model, QWidget *parent = nullptr);
     void getData();
-    void addData(const QVector<QString>& locations,const QString& pollutants,double threshold, const QVector<double>& values, const QVector<bool>& compliances);
+    void addData(const QVector<QString>& locations,const QString& pollutants, const QVector<double>& values, const QVector<bool>& compliances);
 
 private:
     void createWidgets();

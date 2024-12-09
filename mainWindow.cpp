@@ -26,9 +26,8 @@ MainDashboard::MainDashboard():QMainWindow()
 
 void MainDashboard::createWidgets()
 {
-  // Create undo and redo actions
-  undoAction = new QAction(QIcon::fromTheme("edit-undo"), "Undo", this);
-  redoAction = new QAction(QIcon::fromTheme("edit-redo"), "Redo", this);
+  home = new QPushButton("Home");
+  home->setFixedWidth(80);
   header = new QWidget();
   tabBar = new QTabWidget();
   //langLabel = new QLabel("Language:");
@@ -47,8 +46,7 @@ void MainDashboard::createTabBar()
     topToolBar = new QToolBar(this);
     topToolBar->setMovable(false);
     topToolBar->setFloatable(false);
-    topToolBar->addAction(undoAction);
-    topToolBar->addAction(redoAction);
+    topToolBar->addWidget(home);
     QWidget* spacer = new QWidget();
     spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     topToolBar->addWidget(spacer);
@@ -104,34 +102,15 @@ void MainDashboard::createPages()
 
 }
 
-void MainDashboard::setupUndoRedoActions()
-{
-    // Connect undo and redo actions
-    connect(undoAction, &QAction::triggered, this, &MainDashboard::undoLastAction);
-    connect(redoAction, &QAction::triggered, this, &MainDashboard::redoLastAction);
-}
-
-void MainDashboard::undoLastAction()
-{
-    qDebug() << "Undo action triggered";
-    updateUndoRedoActions();
-}
-
-void MainDashboard::redoLastAction()
-{
-    qDebug() << "Redo action triggered";
-    updateUndoRedoActions();
-}
-
-void MainDashboard::updateUndoRedoActions()
-{
-}
-
 
 void MainDashboard::createActions()
 {
     // Existing connections
     connect(tabBar, SIGNAL(currentChanged(int)), mainWidget, SLOT(setCurrentIndex(int)));
+    connect(home, &QPushButton::clicked, this, [this]() {
+        tabBar->setCurrentIndex(0);  
+        mainWidget->setCurrentIndex(0);  
+    });
    QShortcut* shortcutDashboard = new QShortcut(QKeySequence("1"), this);
     connect(shortcutDashboard, &QShortcut::activated, this, [this]() {
         tabBar->setCurrentIndex(0);  // Dashboard

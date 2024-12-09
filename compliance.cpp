@@ -42,7 +42,6 @@ void ComplianceDashboard::getData(){
 
     QMap<QString, QVector<QString>> locations;
     QMap<QString, QVector<double>> values;
-    QMap<QString, double> thresholds;
     QMap<QString, QVector<bool>> compliances;
     
     int rownum = dataModel->rowCount(QModelIndex());
@@ -50,7 +49,6 @@ void ComplianceDashboard::getData(){
     // clear data
     locations.clear();
     values.clear();
-    thresholds.clear();
     compliances.clear();
     items.clear();
 
@@ -72,20 +70,16 @@ void ComplianceDashboard::getData(){
         }
         locations[parameter].append(site);
         compliances[parameter].append(compliance);
-        if (!thresholds.contains(parameter)) {
-            thresholds[parameter] = threshold;
-        }
     }
 
     // add data
     for(auto it = values.begin(); it != values.end(); ++it){
         const QString& temp_pollutants = it.key();
         const QVector<QString>& temp_locations = locations[temp_pollutants];
-        double temp_threshold = thresholds[temp_pollutants];
         const QVector<double>& temp_values = it.value();
         const QVector<bool>& temp_compliances = compliances[temp_pollutants];
         
-        addData(temp_locations, temp_pollutants, temp_threshold, temp_values, temp_compliances);
+        addData(temp_locations, temp_pollutants, temp_values, temp_compliances);
     }
 }
 
@@ -142,19 +136,17 @@ void ComplianceDashboard::createFilter() {
 void ComplianceDashboard::addData(
     const QVector<QString>& locations,
     const QString& pollutants,
-    double thresholds,
     const QVector<double>& values,
     const QVector<bool>& compliances
 ) {
     if(items.contains(pollutants)) {
-        items[pollutants].item->updateData(locations, thresholds, values, compliances);
+        items[pollutants].item->updateData(locations, values, compliances);
         return;
     }
 
     ComplianceDashboardItem* item = new ComplianceDashboardItem(
         locations,
         pollutants,
-        thresholds,
         values,
         compliances,
         this

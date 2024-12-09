@@ -3,14 +3,12 @@
 ComplianceDashboardItem::ComplianceDashboardItem(
     const QVector<QString>& locations,
     const QString& pollutants,
-    double thresholds,
     const QVector<double>& values,
     const QVector<bool>& compliances,
     QWidget *parent
     ) : QWidget(parent),
     itemLocation(locations),
     itemPollutant(pollutants),
-    itemThreshold(thresholds),
     itemValue(values),
     itemIsComply(compliances){
     createWidgets();
@@ -27,7 +25,7 @@ void ComplianceDashboardItem::createWidgets() {
     graphLayout->addWidget(itemNameLabel);
 
     // Determine compliance status first
-    QList<QString> status = determineComplianceStatus(itemValue, itemThreshold, itemIsComply);
+    QList<QString> status = determineComplianceStatus(itemValue, itemIsComply);
     averageValue = status[2].toDouble();
     complianceStatus = (status[0] == "Compliant" || status[0] == "Caution");
 
@@ -56,12 +54,10 @@ void ComplianceDashboardItem::createWidgets() {
 
 void ComplianceDashboardItem::updateData(
     const QVector<QString>& locations,
-    double thresholds,
     const QVector<double>& values,
     const QVector<bool>& compliances
     ) {
     itemLocation = locations;
-    itemThreshold = thresholds;
     itemValue = values;
 
     // recreate with new data
@@ -75,15 +71,11 @@ void ComplianceDashboardItem::updateData(
 
 QList<QString> ComplianceDashboardItem::determineComplianceStatus(
     const QVector<double>& measurements,
-    double safeThreshold,
     const QVector<bool>& isComply
     ) {
-    int exceedanceCount = std::count_if(measurements.begin(), measurements.end(),
-                                        [safeThreshold](double val) { return val > safeThreshold; }); //compare with threshold(dummy)
     int statusCount = std::count_if(isComply.begin(), isComply.end(),
                                     [](bool val) { return val == true; }); // compare with compliance data
     double average = std::round((std::accumulate(measurements.begin(), measurements.end(), 0.0)/measurements.size())*100.0)/100.0;
-    double exceedancePercentage = (double)exceedanceCount / measurements.size() * 100;
     double statusPercentage = std::round(((double)statusCount/isComply.size() * 100)*100.0)/100.0;
     if (statusPercentage >= 50) return {"Compliant", QString::number(statusPercentage),QString::number(average)};
     if (statusPercentage >= 50) return {"Caution", QString::number(statusPercentage),QString::number(average)};
@@ -99,13 +91,13 @@ QColor ComplianceDashboardItem::getComplianceColor(const QString& status) {
 
 void ComplianceDashboardItem::createGraphs() {
 
-    QTableWidget *table = new QTableWidget(itemLocation.size() + 1, 4);
-    table->setHorizontalHeaderLabels({"Location", "Measurement", "Threshold", "Compliance"});
+    QTableWidget *table = new QTableWidget(itemLocation.size() + 1, 3);
+    table->setHorizontalHeaderLabels({"Location", "Measurement", "Compliance"});
 
     // Header row formatting
     QFont headerFont = table->horizontalHeaderItem(0)->font();
     headerFont.setBold(true);
-    for (int col = 0; col < 4; ++col) {
+    for (int col = 0; col < 3; ++col) {
         table->horizontalHeaderItem(col)->setFont(headerFont);
     }
 
@@ -113,7 +105,6 @@ void ComplianceDashboardItem::createGraphs() {
     for (int i = 0; i < itemLocation.size(); i++) {
         QTableWidgetItem *locationItem = new QTableWidgetItem(itemLocation[i]);
         QTableWidgetItem *measurementItem = new QTableWidgetItem(QString::number(itemValue[i]));
-        QTableWidgetItem *thresholdItem = new QTableWidgetItem(QString::number(itemThreshold));
         QTableWidgetItem *complianceItem = new QTableWidgetItem(itemIsComply[i] ? "Compliant" : "Non-Compliant");
         
         // Color code compliance
@@ -121,8 +112,7 @@ void ComplianceDashboardItem::createGraphs() {
 
         table->setItem(i, 0, locationItem);
         table->setItem(i, 1, measurementItem);
-        table->setItem(i, 2, thresholdItem);
-        table->setItem(i, 3, complianceItem);
+        table->setItem(i, 2, complianceItem);
     }
 
     table->resizeColumnsToContents();
@@ -163,8 +153,7 @@ void ComplianceDashboardItem::showNonComplianceDetails() {
         "Compliance Ratio: %2%<br>"
         "Threshold: %3"
     ).arg(QString::number(averageValue), 
-          QString::number(percentageValue), 
-          QString::number(itemThreshold)), detailsDialog);
+          QString::number(percentageValue)));
     dialogLayout->addWidget(statsLabel);
 
     // Get specific causes

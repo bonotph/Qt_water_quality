@@ -30,12 +30,7 @@ class MainDashboard: public QMainWindow
     void createTabBar();
     void createPages();
     void createActions();
-    void setupUndoRedoActions();
-    void undoLastAction();
-    void redoLastAction();
-    void updateUndoRedoActions();
     void setupShortcuts();
-    void openSettingsPage();
 
     QTabWidget* tabBar;
     QWidget* header;
@@ -52,9 +47,8 @@ class MainDashboard: public QMainWindow
     PollutantOverview* pollutantOverview;
     ComplianceDashboard* complianceDashboard;
     LitterIndicator* litterIndicator;
-    QAction* undoAction;
-    QAction* redoAction;   
     QToolBar* topToolBar;
+    QPushButton* home;
 
     QHBoxLayout* headerLayout;
 };
