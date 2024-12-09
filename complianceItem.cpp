@@ -123,7 +123,7 @@ void ComplianceDashboardItem::createGraphs() {
 void ComplianceDashboardItem::createNumbers(QString percentage, QString average){
     numbers = new QLabel();
     numbers->setText("Compliance ratio: \n" + percentage + '%' + "\n\nAverage amount \nof pollutant:\n " + average + "%");
-    numbers->setMinimumWidth(50);
+    numbers->setMinimumWidth(35);
     numbers->setAlignment(Qt::AlignCenter);
     numbers->setStyleSheet("font-size: 18px; font-weight: bold;");
     itemLayout->addWidget(numbers);

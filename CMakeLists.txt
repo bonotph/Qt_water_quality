@@ -20,6 +20,7 @@ compliance.cpp
 complianceItem.cpp
 pollutantOverview.cpp
 litterindicator.cpp
+dashboard.cpp
 )
 
 target_link_libraries(window PRIVATE Qt6::Widgets Qt6::Charts)
