@@ -1,100 +1,106 @@
 #include "litterindicator.hpp"
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QDebug>
-#include <QSpacerItem>
 
 LitterIndicator::LitterIndicator(SampleModel* sharedModel, QWidget *parent)
-    : model(sharedModel), QMainWindow(parent)
-{
-    setWindowTitle("Environmental Litter Indicator");
+    : QWidget(parent), model(sharedModel) {
+    std::cout << "Model address: " << model << std::endl;
 
-    // Central widget
-    QWidget *centralWidget = new QWidget(this);
-    setCentralWidget(centralWidget);
+    barChart = new QChart();
+    chartView = new QChartView(barChart);
 
-    // Main layout: vertical
-    QVBoxLayout *mainLayout = new QVBoxLayout(centralWidget);
+    createWidgets();
+    makeConnections();
+    addChart();
+}
 
-    // ====== Time, location, and search button layout ======
-    QHBoxLayout *selectLayout = new QHBoxLayout();
+void LitterIndicator::createWidgets() {
+    filterLayout = new QHBoxLayout();
+    siteBox = new QComboBox();
+    materialBox = new QComboBox();
+    searchButton = new QPushButton("Search");
+
+    siteBox->addItems(siteNames);
+    materialBox->addItems(waterTypes);
+
+    filterLayout->addWidget(siteBox);
+    filterLayout->addWidget(materialBox);
+    filterLayout->addWidget(searchButton);
+
+    mainLayout = new QVBoxLayout();
+    mainLayout->addLayout(filterLayout);
+    setLayout(mainLayout);
+}
+
+void LitterIndicator::addChart() {
+    chartView->setRenderHint(QPainter::Antialiasing);
+    mainLayout->addWidget(chartView);
+}
+
+void LitterIndicator::changeChart(const QString& site, const QString& waterType) {
+    barChart->removeAllSeries();  
+    QList<QAbstractAxis*> axes = barChart->axes();  
+    for (QAbstractAxis* axis : axes) {
+        barChart->removeAxis(axis);  
+    }
+
+    QBarSeries* series = new QBarSeries(); 
+
+  
+    QMap<QString, double> waterTypeData;
+
+    for (int i = 0; i < model->rowCount(QModelIndex()); i++) {
+        QString rowSite = model->data(model->index(i, 1), Qt::DisplayRole).toString(); 
+        QString rowWaterType = model->data(model->index(i, 2), Qt::DisplayRole).toString();  
+        double litterCount = model->data(model->index(i, 4), Qt::DisplayRole).toDouble();  
+
+        if ((site == "All locations" || rowSite == site) && (waterType == "All types" || rowWaterType == waterType)) {
+            waterTypeData[rowWaterType] += litterCount;  
+        }
+    }
+
+    qDebug() << "Water type data: " << waterTypeData;
+
     
-    // Location selection
-    locationComboBox = new QComboBox(this);
-    locationComboBox->addItem("All locations");
-    locationComboBox->addItem("Location 1");
-    locationComboBox->addItem("Location 2");
-    selectLayout->addWidget(locationComboBox);
-
-    // Time selection
-    datePickerComboBox = new QComboBox(this);
-    datePickerComboBox->addItem("All time");
-    datePickerComboBox->addItem("Last Week");
-    datePickerComboBox->addItem("Last Month");
-    datePickerComboBox->addItem("Last Year");
-    selectLayout->addWidget(datePickerComboBox);
-
-    // Search button
-    searchButton = new QPushButton("Search", this);
-    connect(searchButton, &QPushButton::clicked, this, &LitterIndicator::onSearchClicked);
-    selectLayout->addWidget(searchButton);
-
-    mainLayout->addLayout(selectLayout);
-
-    // Graphics view
-    graphicsView = new QGraphicsView(this);
-    graphicsView->setStyleSheet("background-color: white; border: 5px solid gray;");
-    graphicsView->setMinimumSize(600, 400);
-    mainLayout->addWidget(graphicsView);
-
-    // Connect signals for debug logging
-    connect(locationComboBox, &QComboBox::currentTextChanged, this, [](const QString &text) {
-        qDebug() << "Selected Location:" << text;
-    });
-
-    connect(datePickerComboBox, &QComboBox::currentTextChanged, this, [](const QString &text) {
-        qDebug() << "Selected Date Range:" << text;
-    });
-
-
-
-
-    //data:
-    for (int i = 0; i < model->rowCount(QModelIndex()); ++i)
-    {
-        QString pollutant = model->data(model->index(i, 2), Qt::DisplayRole).toString();  // get column stuff
+    QStringList categories;  
+    for (const QString& water : waterTypeData.keys()) {
+        categories << water;
     }
 
 
+    qDebug() << "Categories for X axis: " << categories;
+
+    QBarSet* barSet = new QBarSet("Litter Count");
+    for (const QString& water : categories) {
+        *barSet << waterTypeData.value(water, 0); 
+    }
+
+    series->append(barSet);  
+
+    barChart->addSeries(series);
 
 
+    QBarCategoryAxis* axisX = new QBarCategoryAxis();
+    axisX->append(categories);
+    barChart->addAxis(axisX, Qt::AlignBottom);
+    series->attachAxis(axisX);
+
+    QValueAxis* axisY = new QValueAxis();
+    axisY->setTitleText("Litter Count");
+    axisY->setRange(0, 100); 
+    barChart->addAxis(axisY, Qt::AlignLeft);
+    series->attachAxis(axisY);
 
 
+    barChart->setTitle(QString("Litter Levels by Water Type (%1)").arg(waterType));
 
-
-
-
-
-
+    chartView->setChart(barChart);
 }
 
-LitterIndicator::~LitterIndicator()
-{
-    // Destructor for cleanup if needed
+void LitterIndicator::search() {
+    QString selectedSite = siteBox->currentText();
+    QString selectedWaterType = materialBox->currentText();
+    changeChart(selectedSite, selectedWaterType); 
 }
 
-
-void LitterIndicator::onSearchClicked()
-{
-    QString selectedLocation = locationComboBox->currentText();
-    QString selectedDate = datePickerComboBox->currentText();
-
-    qDebug() << "Search clicked with Location:" << selectedLocation << ", Date:" << selectedDate;
-    updateChart(selectedLocation, selectedDate);
-}
-
-
-void LitterIndicator::updateChart(const QString &location, const QString &dateRange)
-{
-    qDebug() << "Updating chart for Location:" << location << ", Date:" << dateRange;
+void LitterIndicator::makeConnections() {
+    connect(searchButton, SIGNAL(clicked()), this, SLOT(search()));
 }
