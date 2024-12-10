@@ -1,15 +1,15 @@
+#include <QtWidgets>
+#include <QtCharts>
+#include <QList>
+
 #include "litterindicator.hpp"
 
-LitterIndicator::LitterIndicator(SampleModel* sharedModel, QWidget *parent)
-    : QWidget(parent), model(sharedModel) {
-    std::cout << "Model address: " << model << std::endl;
-
-    barChart = new QChart();
-    chartView = new QChartView(barChart);
+LitterIndicator::LitterIndicator(SampleModel* sharedModel)
+{
+    model = sharedModel;
 
     createWidgets();
     makeConnections();
-    addChart();
 }
 
 void LitterIndicator::createWidgets() {
@@ -25,46 +25,44 @@ void LitterIndicator::createWidgets() {
     filterLayout->addWidget(materialBox);
     filterLayout->addWidget(searchButton);
 
+    barChart = new QChart();
+    chartView = new QChartView(barChart);
+    chartView->setRenderHint(QPainter::Antialiasing);
+
     mainLayout = new QVBoxLayout();
     mainLayout->addLayout(filterLayout);
+    mainLayout->addWidget(chartView);
     setLayout(mainLayout);
 }
 
-void LitterIndicator::addChart() {
-    chartView->setRenderHint(QPainter::Antialiasing);
-    mainLayout->addWidget(chartView);
-}
-
 void LitterIndicator::changeChart(const QString& site, const QString& waterType) {
-    barChart->removeAllSeries();  
-    QList<QAbstractAxis*> axes = barChart->axes();  
+    barChart->removeAllSeries(); 
+
+    QList<QAbstractAxis*> axes = barChart->axes();
     for (QAbstractAxis* axis : axes) {
-        barChart->removeAxis(axis);  
+        barChart->removeAxis(axis);
     }
 
-    QBarSeries* series = new QBarSeries(); 
+    series = new QBarSeries(); 
 
-  
     QMap<QString, double> waterTypeData;
 
     for (int i = 0; i < model->rowCount(QModelIndex()); i++) {
         QString rowSite = model->data(model->index(i, 1), Qt::DisplayRole).toString(); 
-        QString rowWaterType = model->data(model->index(i, 2), Qt::DisplayRole).toString();  
-        double litterCount = model->data(model->index(i, 4), Qt::DisplayRole).toDouble();  
+        QString rowWaterType = model->data(model->index(i, 7), Qt::DisplayRole).toString();  
+        double litterCount = model->data(model->index(i, 3), Qt::DisplayRole).toDouble(); 
 
-        if ((site == "All locations" || rowSite == site) && (waterType == "All types" || rowWaterType == waterType)) {
+        if ((site == "All locations" || rowSite == site) && (waterType == "All types" || rowWaterType.contains(waterType, Qt::CaseInsensitive))) {
             waterTypeData[rowWaterType] += litterCount;  
         }
     }
 
     qDebug() << "Water type data: " << waterTypeData;
 
-    
     QStringList categories;  
     for (const QString& water : waterTypeData.keys()) {
         categories << water;
     }
-
 
     qDebug() << "Categories for X axis: " << categories;
 
@@ -77,18 +75,16 @@ void LitterIndicator::changeChart(const QString& site, const QString& waterType)
 
     barChart->addSeries(series);
 
-
-    QBarCategoryAxis* axisX = new QBarCategoryAxis();
+    axisX = new QBarCategoryAxis();
     axisX->append(categories);
     barChart->addAxis(axisX, Qt::AlignBottom);
     series->attachAxis(axisX);
 
-    QValueAxis* axisY = new QValueAxis();
+    axisY = new QValueAxis();
     axisY->setTitleText("Litter Count");
     axisY->setRange(0, 100); 
     barChart->addAxis(axisY, Qt::AlignLeft);
     series->attachAxis(axisY);
-
 
     barChart->setTitle(QString("Litter Levels by Water Type (%1)").arg(waterType));
 
@@ -96,8 +92,9 @@ void LitterIndicator::changeChart(const QString& site, const QString& waterType)
 }
 
 void LitterIndicator::search() {
-    QString selectedSite = siteBox->currentText();
-    QString selectedWaterType = materialBox->currentText();
+    selectedSite = siteBox->currentText();
+    selectedWaterType = materialBox->currentText();
+    qDebug() << "Selected site: " << selectedSite << ", selected water type: " << selectedWaterType;
     changeChart(selectedSite, selectedWaterType); 
 }
 

@@ -13,13 +13,10 @@ class SampleModel: public QAbstractTableModel
     bool hasData() const { return dataset.size() > 0; }
 
     int rowCount(const QModelIndex& index) const { return dataset.size(); }
-    int columnCount(const QModelIndex& index) const { return 7; }
+    int columnCount(const QModelIndex& index) const { return 8; }
     QVariant data(const QModelIndex&, int) const;
     QVariant headerData(int, Qt::Orientation, int) const;
     QStringList getUniquePollutants() const;
-
-    /*double meanDepth() const { return dataset.meanDepth(); }
-    double meanMagnitude() const { return dataset.meanMagnitude(); }*/
 
   private:
     SampleDataset dataset;

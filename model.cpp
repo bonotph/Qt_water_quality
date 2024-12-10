@@ -30,6 +30,7 @@ QVariant SampleModel::data(const QModelIndex& index, int role) const
       case 4: return QVariant(q.getUnit().c_str());
       case 5: return QVariant(q.getMaterial().c_str());
       case 6: return QVariant(q.getCompliance().c_str());
+      case 7: return QVariant(q.getWaterType().c_str());
     }
   }
 
@@ -55,6 +56,7 @@ QVariant SampleModel::headerData(int section, Qt::Orientation orientation, int r
     case 4: return QString("Unit");
     case 5: return QString("Material");
     case 6: return QString("Compliance");
+    case 7: return QString("Water Type");
     default: return QVariant();
   }
 }

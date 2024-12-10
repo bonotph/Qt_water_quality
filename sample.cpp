@@ -5,13 +5,11 @@
 
 using namespace std;
 
-
-Sample::Sample(const string& tm, const string& si, const string& para, double res, const string& un, const string& ma, const string& co):
-    time(tm), site(si), parameter(para), result(res), unit(un), material(ma), compliance(co)
+Sample::Sample(const string& tm, const string& si, const string& para, double res, const string& un, const string& ma, const string& co, const string& wt):
+    time(tm), site(si), parameter(para), result(res), unit(un), material(ma), compliance(co), waterType(wt)
 {
   ostringstream error;
 }
-
 
 ostream& operator<<(ostream& out, const Sample& sample)
 {
@@ -21,5 +19,6 @@ ostream& operator<<(ostream& out, const Sample& sample)
              << "\nResult: " << sample.getResult() 
              << "\nUnit: " << sample.getUnit()
              << "\nMaterial: " << sample.getMaterial()
-             << "\nCompliance: " << sample.getCompliance() << endl;;
+             << "\nCompliance: " << sample.getCompliance() 
+             << "\nWater Type: " << sample.getWaterType() << endl;;
 }

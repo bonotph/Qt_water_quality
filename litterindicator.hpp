@@ -1,53 +1,66 @@
-#ifndef LITTERINDICATOR_HPP
-#define LITTERINDICATOR_HPP
-
 #include <QtWidgets>
-#include <QtCharts>
+#include <QStringList>
+
 #include "model.hpp"
 
-class LitterIndicator : public QWidget {
+class QVBoxLayout;
+class QHBoxLayout;
+class QComboBox;
+class QPushButton;
+class QChart;
+class QChartView;
+class QString;
+
+class QBarSeries;
+class QBarCategoryAxis;
+class QValueAxis;
+
+class LitterIndicator : public QWidget
+{
     Q_OBJECT
 
-public:
-    explicit LitterIndicator(SampleModel* sharedModel, QWidget *parent = nullptr);
+    public:
+        LitterIndicator(SampleModel* sharedModel);
 
-private slots:
-    //void updateChart();  
-    void addChart();    
-    void search();
-    void changeChart(const QString& site, const QString& waterType); 
+    private:
+        void createWidgets();
+        void makeConnections();
+        // void updateChart();
+        void changeChart(const QString &site, const QString &waterType);
 
-private:
-    SampleModel* model;  
+        SampleModel *model;
 
-    QVBoxLayout* mainLayout;
-    QHBoxLayout* filterLayout;
-    QComboBox* siteBox;
-    QComboBox* materialBox;
-    QComboBox* waterTypeBox;     
-    QPushButton* searchButton;
+        QVBoxLayout *mainLayout;
+        QHBoxLayout *filterLayout;
+        QComboBox *siteBox;
+        QComboBox *materialBox;
+        QComboBox *waterTypeBox;
+        QPushButton *searchButton;
+        QChart *barChart;
+        QChartView *chartView;
 
-    QStringList siteNames = {
-        "All locations",
-        "MALHAM TRAN",
-        "DON AT A638 NORTH BRIDGE RD - DONCASTER",
-        "ESK AT RUSWARP - BANKSIDE",
-        "WHARFE ABOVE TADCASTER WEIR"
-    };
-    QStringList waterTypes = { 
-        "All types",
-        "Lake",
-        "Pond",
-        "Reservoir",
-        "River",
-        "Stream"
-    };
+        QString selectedSite;
+        QString selectedWaterType;
 
-    // 图表相关
-    void createWidgets();  
-    void makeConnections();  
-    QChart* barChart;        
-    QChartView* chartView;   
+        QBarSeries* series;
+        QBarCategoryAxis* axisX;
+        QValueAxis* axisY;
+
+        QStringList siteNames = {
+            "All locations",
+            "MALHAM TRAN",
+            "DON AT A638 NORTH BRIDGE RD - DONCASTER",
+            "ESK AT RUSWARP - BANKSIDE",
+            "WHARFE ABOVE TADCASTER WEIR"};
+
+        QStringList waterTypes = {
+            "All types",
+            "Lake",
+            "Pond",
+            "Reservoir",
+            "River",
+            "Stream"};
+
+    private slots:
+        void search();
 };
-
-#endif // LITTERINDICATOR_HPP

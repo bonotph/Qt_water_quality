@@ -22,7 +22,8 @@ void SampleDataset::loadData(const string& filename)
       row["result"].get<double>(),
       row["determinand.unit.label"].get<>(), //unit
       row["sample.sampledMaterialType.label"].get<>(), //material
-      row["sample.isComplianceSample"].get<>() //compliance status
+      row["sample.isComplianceSample"].get<>(), //compliance status
+      row["sample.sampledMaterialType.label"].get<>() //Water type
     };
     data.push_back(Sample);
   }
