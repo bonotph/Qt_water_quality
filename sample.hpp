@@ -7,7 +7,7 @@
 class Sample
 {
   public:
-    Sample(const std::string&, const std::string&, const std::string&, double, const std::string&, const std::string&, const std::string&);
+    Sample(const std::string&, const std::string&, const std::string&, double, const std::string&, const std::string&, const std::string&, const std::string&);
     std::string getTime() const { return time; }
     std::string getSite() const { return site; }
     std::string getParameter() const { return parameter; }
@@ -15,6 +15,7 @@ class Sample
     std::string getUnit() const { return unit; }
     std::string getMaterial() const { return material; }
     std::string getCompliance() const { return compliance; }
+    std::string getWaterType() const { return waterType; }
 
   private:
     std::string time;
@@ -24,6 +25,7 @@ class Sample
     std::string unit;
     std::string material;
     std::string compliance;
+    std::string waterType;
 };
 
 std::ostream& operator << (std::ostream&, const Sample&);
