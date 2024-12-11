@@ -38,4 +38,12 @@ Run the application with
 
 Make sure you have the Y-2024.csv file containing the data in the coursework directory
 
+## Limitations
 
+We decided aggainst implementing the extra geographic hotspots page as it was optional. We also only have 4 pages implemented as one of our group members was sick for quite some time and didn´t have time for that.
+
+The links on the dashboard (from the dashboard to each of the other pages) take some time to load at times without feedback. Some of the charts on the Dashboard don´t contain the real data.
+
+On the flourinated compounds page the compliance is only a dummy feature which does not respect the actual data. The rollover pop-ups don´t provide much information yet.
+
+On the compliance dashboard the filters are only dummy with no implemented backend.

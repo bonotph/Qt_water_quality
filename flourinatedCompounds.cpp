@@ -132,7 +132,7 @@ void FlourinatedCompounds::search()
 void FlourinatedCompounds::showPointTooltip(const QPointF& point, bool state)
 {
   if (state) {
-    QString tooltipText = QString("X: %1\nY: %2")
+    QString tooltipText = QString("X: %1\nY: %2 \n Flourinated compounds can be harmful to the environment.\nThey can pose real threats and should be observed carefully")
         .arg(QDateTime::fromMSecsSinceEpoch(point.x()).toString("yyyy-MM-dd"))
         .arg(point.y());
     QToolTip::showText(QCursor::pos(), tooltipText);
