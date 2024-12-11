@@ -16,10 +16,10 @@ void Dashboard::createCards()
     timeFilter->addItems({tr("last day"),tr("last month"),tr("last year")});
     
 
-    pollutantOverviewCard = new QPushButton(tr("Pollutant Overview"));
-    litterIndicatorCard = new QPushButton(tr("Environmental Litter"));
-    fluorinatedCompoundsCard = new QPushButton(tr("Fluorinated Compounds"));
-    complianceDashboardCard = new QPushButton(tr("Compliance Dashboard"));
+    pollutantOverviewCard = new QPushButton(tr("&Pollutant Overview"));
+    litterIndicatorCard = new QPushButton(tr("&Environmental Litter"));
+    fluorinatedCompoundsCard = new QPushButton(tr("&Fluorinated Compounds"));
+    complianceDashboardCard = new QPushButton(tr("&Compliance Dashboard"));
 
     const QString cardStyle = R"(
         QPushButton {
@@ -113,10 +113,10 @@ void Dashboard::setupLayout()
 void Dashboard::retranslateUi()
 {
     titleLabel->setText(tr("Dashboard Overview"));
-    pollutantOverviewCard->setText(tr("Pollutant Overview"));
-    litterIndicatorCard->setText(tr("Environmental Litter"));
-    fluorinatedCompoundsCard->setText(tr("Fluorinated Compounds"));
-    complianceDashboardCard->setText(tr("Compliance Dashboard"));
+    pollutantOverviewCard->setText(tr("&Pollutant Overview"));
+    litterIndicatorCard->setText(tr("&Environmental Litter"));
+    fluorinatedCompoundsCard->setText(tr("&Fluorinated Compounds"));
+    complianceDashboardCard->setText(tr("&Compliance Dashboard"));
     timeFilter->clear();
     timeFilter->addItems({tr("last day"),tr("last month"),tr("last year")});
 }

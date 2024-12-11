@@ -20,7 +20,7 @@ void FlourinatedCompounds::createWidgets()
 
   siteBox = new QComboBox();
   compoundBox = new QComboBox();
-  searchButton = new QPushButton(tr("Search"));
+  searchButton = new QPushButton(tr("&Search"));
 
   series = new QLineSeries();
   scatterSeries = new QScatterSeries();

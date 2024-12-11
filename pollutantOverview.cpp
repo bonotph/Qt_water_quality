@@ -25,7 +25,7 @@ void PollutantOverview::createWidgets()
     pollutantSearchBox = new QComboBox();
     pollutantSearchBox->addItems(model->getUniquePollutants());  // Assuming this method returns pollutant names.
 
-    searchButton = new QPushButton("Search");
+    searchButton = new QPushButton("&Search");
 }
 
 void PollutantOverview::createLayouts()
@@ -78,6 +78,6 @@ void PollutantOverview::updateGraph(const QString& pollutantName)
 
 void PollutantOverview::retranslateUi()
 {
-    searchButton->setText(tr("Search"));
+    searchButton->setText(tr("&Search"));
     // probably missing widgets
 }

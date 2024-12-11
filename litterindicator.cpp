@@ -16,7 +16,7 @@ void LitterIndicator::createWidgets() {
     filterLayout = new QHBoxLayout();
     siteBox = new QComboBox();
     materialBox = new QComboBox();
-    searchButton = new QPushButton("Search");
+    searchButton = new QPushButton("&Search");
 
     siteBox->addItems(siteNames);
     materialBox->addItems(waterTypes);

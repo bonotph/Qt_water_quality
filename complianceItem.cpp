@@ -31,7 +31,7 @@ void ComplianceDashboardItem::createWidgets() {
 
     // Only add details button if NOT compliant
     if (!complianceStatus) {
-        QPushButton* detailsButton = new QPushButton(tr("View Non-Compliance Details"), this);
+        QPushButton* detailsButton = new QPushButton(tr("&View Non-Compliance Details"), this);
         detailsButton->setStyleSheet("background-color: #FF4444; color: white; font-weight: bold;");
         connect(detailsButton, &QPushButton::clicked, this, &ComplianceDashboardItem::showNonComplianceDetails);
         graphLayout->addWidget(detailsButton);
@@ -194,7 +194,7 @@ void ComplianceDashboardItem::showNonComplianceDetails() {
     }
 
     // Close button
-    QPushButton* closeButton = new QPushButton(tr("Close"), detailsDialog);
+    QPushButton* closeButton = new QPushButton(tr("&Close"), detailsDialog);
     connect(closeButton, &QPushButton::clicked, detailsDialog, &QDialog::accept);
     dialogLayout->addWidget(closeButton);
 

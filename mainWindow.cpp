@@ -25,7 +25,7 @@ MainDashboard::MainDashboard():QMainWindow()
 
 void MainDashboard::createWidgets()
 {
-  home = new QPushButton(tr("Home"));
+  home = new QPushButton(tr("&Home"));
   home->setFixedWidth(80);
   header = new QWidget();
   tabBar = new QTabWidget();
@@ -49,7 +49,7 @@ void MainDashboard::createTabBar()
     QWidget* spacer = new QWidget();
     spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     topToolBar->addWidget(spacer);
-    langChoice->addItems({tr("English"), tr("French"), tr("German"), tr("Spanish"), tr("Italian")});
+    langChoice->addItems({tr("&English"), tr("&French"), tr("&German"), tr("&Spanish"), tr("&Italian")});
     topToolBar->addWidget(langChoice);
 
     tabBar->addTab(new QWidget(), tr("Dashboard"));
@@ -117,7 +117,7 @@ void MainDashboard::changeLanguage(const QString& language)
 void MainDashboard::retranslateUi()
 {
     setWindowTitle(tr("Water Quality Monitor"));
-    home->setText(tr("Home"));
+    home->setText(tr("&Home"));
     shortcutReminder->setText(tr("Keyboard shortcuts: Press 1-7 to switch tabs"));
 
     tabBar->setTabText(0, tr("Dashboard"));
@@ -127,6 +127,9 @@ void MainDashboard::retranslateUi()
     tabBar->setTabText(4, tr("Flourinated Compounds"));
     tabBar->setTabText(5, tr("Compliance Dashboard"));
     tabBar->setTabText(6, tr("Table"));
+
+    langChoice->clear();
+    langChoice->addItems({tr("&English"), tr("&French"), tr("&German"), tr("&Spanish"), tr("&Italian")});
 
     dashboard->retranslateUi();
     pollutantOverview->retranslateUi();

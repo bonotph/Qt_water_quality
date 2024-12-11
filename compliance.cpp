@@ -96,7 +96,7 @@ void ComplianceDashboard::createFilter() {
 
     // search input
     searchLineEdit = new QLineEdit(this);
-    searchLineEdit->setPlaceholderText(tr("Search pollutants or sites..."));
+    searchLineEdit->setPlaceholderText(tr("&Search pollutants or sites..."));
     searchLineEdit->setMinimumWidth(200);
 
     // compliance filter combo box
@@ -110,7 +110,7 @@ void ComplianceDashboard::createFilter() {
     sortComboBox->setMinimumWidth(150);
 
     // apply and reset buttons
-    QPushButton* resetButton = new QPushButton(tr("Reset"), this);
+    QPushButton* resetButton = new QPushButton(tr("&Reset"), this);
     resetButton->setFixedWidth(80);
     locationFilter = new QComboBox(this);
     locationFilter->addItems({tr("All Locations (dummy)"), tr("Yorkshire")});
