@@ -110,6 +110,16 @@ void Dashboard::setupLayout()
     mainLayout->addLayout(cardLayout);
 }
 
+void Dashboard::retranslateUi()
+{
+    titleLabel->setText(tr("Dashboard Overview"));
+    pollutantOverviewCard->setText(tr("Pollutant Overview"));
+    litterIndicatorCard->setText(tr("Environmental Litter"));
+    fluorinatedCompoundsCard->setText(tr("Fluorinated Compounds"));
+    complianceDashboardCard->setText(tr("Compliance Dashboard"));
+    timeFilter->clear();
+    timeFilter->addItems({tr("last day"),tr("last month"),tr("last year")});
+}
 
 QChartView* Dashboard::createSummaryChart(const QString& title, const QVector<double>& data, const QStringList& categories){   
     //check empty

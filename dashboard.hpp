@@ -13,6 +13,7 @@ class Dashboard : public QWidget
 
 public:
     explicit Dashboard(QTabWidget* tabWidget, SampleModel* sharedModel, QWidget* parent = nullptr);
+    void retranslateUi();
 
 private:
     void createCards();

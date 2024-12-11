@@ -75,3 +75,9 @@ void PollutantOverview::updateGraph(const QString& pollutantName)
     chart->setTitle(pollutantName + " Trends");
     chart->createDefaultAxes();
 }
+
+void PollutantOverview::retranslateUi()
+{
+    searchButton->setText(tr("Search"));
+    // probably missing widgets
+}

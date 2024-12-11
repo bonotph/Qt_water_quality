@@ -18,6 +18,7 @@ class PollutantOverview : public QWidget
 public:
     // Constructor with SampleModel reference
     PollutantOverview(SampleModel* sharedModel, QWidget* parent = nullptr);
+    void retranslateUi();
 
 private:
     SampleModel* model;           // Store the model reference
@@ -43,4 +44,5 @@ private:
 
     // Function to update the graph based on selected pollutant
     void updateGraph(const QString& pollutantName);
+
 };

@@ -213,3 +213,7 @@ void ComplianceDashboard::resetFilter() {
         data.item->setVisible(true);
     }
 }
+
+void ComplianceDashboard::retranslateUi() {
+    //add widgets
+}

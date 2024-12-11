@@ -7,7 +7,7 @@ class QWidget;
 class QLabel;
 class QComboBox;
 class QStackedWidget;
-
+class QToolBar;
 class QHBoxLayout;
 
 class SampleModel;
@@ -17,6 +17,8 @@ class FlourinatedCompounds;
 class PollutantOverview;
 class ComplianceDashboard;
 class LitterIndicator;
+
+class QTranslator;
 
 class MainDashboard: public QMainWindow
 {
@@ -29,16 +31,18 @@ class MainDashboard: public QMainWindow
     void createWidgets();
     void createTabBar();
     void createPages();
-    void createActions();
-    void setupShortcuts();
+    void makeConnections();
+    void makeShortcuts();
+    void retranslateUi();
+
+    QTranslator appTranslator;
 
     QTabWidget* tabBar;
     QWidget* header;
-    QLabel* langLabel;
     QComboBox* langChoice;
     QStackedWidget* mainWidget;
     QLabel* shortcutReminder;
-
+    QVBoxLayout* verticalLayout;
     SampleModel* sharedModel;
 
     TableWidget* tableWidget;
@@ -51,4 +55,10 @@ class MainDashboard: public QMainWindow
     QPushButton* home;
 
     QHBoxLayout* headerLayout;
+
+    int index;
+
+  private slots:
+    void changeLanguage(const QString&);
+    
 };

@@ -98,6 +98,10 @@ void LitterIndicator::search() {
     changeChart(selectedSite, selectedWaterType); 
 }
 
+void LitterIndicator::retranslateUi() {
+    // add widgets for translation
+}
+
 void LitterIndicator::makeConnections() {
     connect(searchButton, SIGNAL(clicked()), this, SLOT(search()));
 }

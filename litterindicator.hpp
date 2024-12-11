@@ -21,11 +21,11 @@ class LitterIndicator : public QWidget
 
     public:
         LitterIndicator(SampleModel* sharedModel);
+        void retranslateUi();
 
     private:
         void createWidgets();
         void makeConnections();
-        // void updateChart();
         void changeChart(const QString &site, const QString &waterType);
 
         SampleModel *model;

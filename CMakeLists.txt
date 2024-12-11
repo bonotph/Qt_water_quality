@@ -5,8 +5,8 @@ project(coursework VERSION 1.0.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Widgets Charts)
-qt_standard_project_setup()
+find_package(Qt6 REQUIRED COMPONENTS Widgets Charts LinguistTools)
+qt_standard_project_setup(I18N_TRANSLATED_LANGUAGES fr de es it)
 
 qt_add_executable(window
 main.cpp
@@ -21,6 +21,14 @@ complianceItem.cpp
 pollutantOverview.cpp
 litterindicator.cpp
 dashboard.cpp
+)
+
+qt_add_translations(window
+    TS_FILES
+    coursework_fr.ts
+    coursework_de.ts
+    coursework_es.ts
+    coursework_it.ts
 )
 
 target_link_libraries(window PRIVATE Qt6::Widgets Qt6::Charts)

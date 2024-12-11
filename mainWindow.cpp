@@ -10,18 +10,17 @@
 
 MainDashboard::MainDashboard():QMainWindow()
 {
-
   sharedModel = new SampleModel();
   sharedModel->updateFromFile("../Y-2024.csv");
   
   createWidgets();
   createTabBar();
   createPages();
-  createActions();
+  makeConnections();
+  makeShortcuts();
 
   setMinimumSize(1000, 800);
   setWindowTitle(tr("Water Quality Monitor"));
-
 }
 
 void MainDashboard::createWidgets()
@@ -30,7 +29,6 @@ void MainDashboard::createWidgets()
   home->setFixedWidth(80);
   header = new QWidget();
   tabBar = new QTabWidget();
-  //langLabel = new QLabel("Language:");
   langChoice = new QComboBox();
   mainWidget = new QStackedWidget();
   tableWidget = new TableWidget(sharedModel);
@@ -41,6 +39,7 @@ void MainDashboard::createWidgets()
   litterIndicator = new LitterIndicator(sharedModel);
   setCentralWidget(mainWidget);
 }
+
 void MainDashboard::createTabBar()
 {
     topToolBar = new QToolBar(this);
@@ -61,19 +60,16 @@ void MainDashboard::createTabBar()
     tabBar->addTab(new QWidget(), tr("Compliance Dashboard"));
     tabBar->addTab(new QWidget(), tr("Table"));
 
-    // Create shortcut reminder label
     shortcutReminder = new QLabel(tr("Keyboard shortcuts: Press 1-7 to switch tabs"));
     shortcutReminder->setAlignment(Qt::AlignCenter);
     shortcutReminder->setStyleSheet("QLabel { color: #666666; font-size: 11px; padding: 2px; }");
 
-    // Create a vertical layout to stack the tab bar and reminder
-    QVBoxLayout* verticalLayout = new QVBoxLayout();
+    verticalLayout = new QVBoxLayout();
     verticalLayout->addWidget(tabBar);
     verticalLayout->addWidget(shortcutReminder);
     verticalLayout->setSpacing(0);
     verticalLayout->setContentsMargins(0, 0, 0, 0);
 
-    // Use the vertical layout in the header
     headerLayout = new QHBoxLayout();
     QWidget* tabContainer = new QWidget();
     tabContainer->setLayout(verticalLayout);
@@ -86,32 +82,84 @@ void MainDashboard::createTabBar()
 void MainDashboard::createPages()
 {
   addToolBar(Qt::TopToolBarArea, topToolBar);
-  //exchange for real pages later
   mainWidget->addWidget(dashboard);  
   mainWidget->addWidget(pollutantOverview);
-  mainWidget->addWidget(new QWidget());
+  mainWidget->addWidget(new QWidget()); // Persistant Organic Pollutants hasn´t been implemented
   mainWidget->addWidget(litterIndicator);
   mainWidget->addWidget(flourinatedCompounds);
   mainWidget->addWidget(complianceDashboard);
 
-  mainWidget->addWidget(tableWidget);
+  mainWidget->addWidget(tableWidget); // not part of the actual application functionality
 
   // default page that is shown in beginning
   mainWidget->setCurrentIndex(0);
   tabBar->setCurrentIndex(0);
-
 }
 
-
-void MainDashboard::createActions()
+void MainDashboard::changeLanguage(const QString& language)
 {
-    // Existing connections
+    qApp->removeTranslator(&appTranslator);
+
+    QString translationFile = "../translations/coursework_" + language + ".qm";
+    if (appTranslator.load(translationFile)) {
+        qApp->installTranslator(&appTranslator);
+        retranslateUi();
+    } else {
+        qWarning() << "Failed to load translation file:" << translationFile;
+    }
+
+    index = langChoice->findText(language, Qt::MatchFixedString);
+    if (index != -1) {
+        langChoice->setCurrentIndex(index);
+    }
+}
+
+void MainDashboard::retranslateUi()
+{
+    setWindowTitle(tr("Water Quality Monitor"));
+    home->setText(tr("Home"));
+    shortcutReminder->setText(tr("Keyboard shortcuts: Press 1-7 to switch tabs"));
+
+    tabBar->setTabText(0, tr("Dashboard"));
+    tabBar->setTabText(1, tr("Pollutant Overview"));
+    tabBar->setTabText(2, tr("Persistant Organic Pollutants"));
+    tabBar->setTabText(3, tr("Environmental Litter"));
+    tabBar->setTabText(4, tr("Flourinated Compounds"));
+    tabBar->setTabText(5, tr("Compliance Dashboard"));
+    tabBar->setTabText(6, tr("Table"));
+
+    dashboard->retranslateUi();
+    pollutantOverview->retranslateUi();
+    litterIndicator->retranslateUi();
+    flourinatedCompounds->retranslateUi(); // only this has a fully implemented method
+    complianceDashboard->retranslateUi();
+}
+
+void MainDashboard::makeConnections()
+{
     connect(tabBar, SIGNAL(currentChanged(int)), mainWidget, SLOT(setCurrentIndex(int)));
     connect(home, &QPushButton::clicked, this, [this]() {
         tabBar->setCurrentIndex(0);  
         mainWidget->setCurrentIndex(0);  
     });
-   QShortcut* shortcutDashboard = new QShortcut(QKeySequence("1"), this);
+
+    connect(langChoice, &QComboBox::currentIndexChanged, this, [this](int index) {
+        QString language;
+        switch (index) {
+            case 0: language = "en"; break;
+            case 1: language = "fr"; break;
+            case 2: language = "de"; break;
+            case 3: language = "es"; break;
+            case 4: language = "it"; break;
+            default: language = "en"; break;
+        }
+        changeLanguage(language);
+    });
+}
+
+void MainDashboard::makeShortcuts()
+{
+    QShortcut* shortcutDashboard = new QShortcut(QKeySequence("1"), this);
     connect(shortcutDashboard, &QShortcut::activated, this, [this]() {
         tabBar->setCurrentIndex(0);  // Dashboard
         mainWidget->setCurrentIndex(0);
@@ -152,7 +200,6 @@ void MainDashboard::createActions()
         tabBar->setCurrentIndex(6);  // Table
         mainWidget->setCurrentIndex(6);
     });
-
 }
 
 

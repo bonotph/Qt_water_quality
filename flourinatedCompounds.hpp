@@ -12,11 +12,15 @@ class QString;
 class SampleModel;
 
 class QLineSeries;
+class QScatterSeries;
 class QChart;
 class QChartView;
 class QDateTimeAxis;
 class QValueAxis;
 class QDateTime;
+class QAreaSeries;
+
+class QTimer;
 
 class FlourinatedCompounds: public QWidget
 {
@@ -24,14 +28,17 @@ class FlourinatedCompounds: public QWidget
 
   public:
     FlourinatedCompounds(SampleModel* sharedModel);
+    void retranslateUi();
 
   private:
     void createWidgets();
     void makeConnections();
     void createXAxis();
     void changeChart(QString site, QString compound);
+    void createColoredRegions();
 
     QLineSeries* series;
+    QScatterSeries* scatterSeries;
     QChart* chart;
     QChartView* chartView;
     QDateTimeAxis* xAxis;
@@ -47,32 +54,36 @@ class FlourinatedCompounds: public QWidget
 
     QString site;
     QString compound;
+    QString unit;
+
+    double padding;
+    double third;
+    double miny = 100;
+    double maxy = 0;
 
     QStringList siteNames = {
-      "AIRE AT BEAL BRIDGE",
-      "DON AT A638 NORTH BRIDGE RD - DONCASTER",
-      "ESK AT RUSWARP - BANKSIDE",
-      "WHARFE ABOVE TADCASTER WEIR"
+      tr("AIRE AT BEAL BRIDGE"),
+      tr("DON AT A638 NORTH BRIDGE RD - DONCASTER"),
+      tr("ESK AT RUSWARP - BANKSIDE"),
+      tr("WHARFE ABOVE TADCASTER WEIR")
     };
     QStringList compoundNames = {
-        "PFOS",
-        "pFoctanoate",
-        "PFHxS-B",
-        "PFHxSA",
-        "PFBS",
-        "8:2 FTSA",
-        "6:2 FTSA",
-        "HFPO-DA",
-        "PFDoS",
-        "PFUnDS",
-        "PFTrDA",
-        "PFPeS",
-        "PFBA",
-        "PFHpS",
-        "PFDS"
+      tr("pFoctanoate"), 
+      tr("PFOS"), 
+      tr("PFHxS-B"), 
+      tr("8:2 FTSA"), 
+      tr("PFDoS"), 
+      tr("PFHxSA"), 
+      tr("6:2 FTSA"), 
+      tr("PFDS"), 
+      tr("PFHpS"), 
+      tr("PFBS"), 
+      tr("HFPO-DA"), 
+      tr("PFUnDS")
     };
 
   private slots:
     void search();
+    void showPointTooltip(const QPointF& point, bool state);
 
 };
