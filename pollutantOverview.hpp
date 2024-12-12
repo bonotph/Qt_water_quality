@@ -9,7 +9,11 @@
 #include <QLineSeries>
 #include <QChart>
 #include <QChartView>
+#include <QDateTimeAxis>
+#include <QValueAxis>
+
 #include "model.hpp"
+
 
 class PollutantOverview : public QWidget
 {
@@ -29,6 +33,8 @@ private:
     QChartView* chartView;         // Chart view to render the chart
     QVBoxLayout* mainLayout;       // Main layout for the widget
     QHBoxLayout* searchLayout;     // Layout for search box and button
+    QDateTimeAxis* xAxis;          // X-axis for the chart
+    QValueAxis* yAxis;
 
     // Helper function to create widgets
     void createWidgets();
@@ -44,5 +50,7 @@ private:
 
     // Function to update the graph based on selected pollutant
     void updateGraph(const QString& pollutantName);
+
+    void createXAxis();
 
 };

@@ -25,10 +25,10 @@ dashboard.cpp
 
 qt_add_translations(window
     TS_FILES
-    coursework_fr.ts
-    coursework_de.ts
-    coursework_es.ts
-    coursework_it.ts
+    translations/coursework_fr.ts
+    translations/coursework_de.ts
+    translations/coursework_es.ts
+    translations/coursework_it.ts
 )
 
 target_link_libraries(window PRIVATE Qt6::Widgets Qt6::Charts)

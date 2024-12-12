@@ -49,7 +49,7 @@ void MainDashboard::createTabBar()
     QWidget* spacer = new QWidget();
     spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     topToolBar->addWidget(spacer);
-    langChoice->addItems({tr("&English"), tr("&French"), tr("&German"), tr("&Spanish"), tr("&Italian")});
+    langChoice->addItems({tr("English"), tr("French"), tr("German"), tr("Spanish"), tr("Italian")});
     topToolBar->addWidget(langChoice);
 
     tabBar->addTab(new QWidget(), tr("Dashboard"));
@@ -129,7 +129,7 @@ void MainDashboard::retranslateUi()
     tabBar->setTabText(6, tr("Table"));
 
     langChoice->clear();
-    langChoice->addItems({tr("&English"), tr("&French"), tr("&German"), tr("&Spanish"), tr("&Italian")});
+    langChoice->addItems({tr("English"), tr("French"), tr("German"), tr("Spanish"), tr("Italian")});
 
     dashboard->retranslateUi();
     pollutantOverview->retranslateUi();
