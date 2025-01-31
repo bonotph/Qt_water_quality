@@ -1,13 +1,5 @@
 # COMP2811 Coursework 3 - Final Project
 
-## Group 53
-
-- Thomas Fleming: sc23tf@leeds.ac.uk
-- Ibraheem Hussain: ed20i3h@leeds.ac.uk
-- Eliana Kaping: mjbj2499@leeds.ac.uk
-- Pok Hin Tang: mqjf5235@leeds.ac.uk
-- Xiangyi Xu: sc23xx@leeds.ac.uk
-
 ## Water Quality Monitor
 This App displays data about the water quality in England.
 
